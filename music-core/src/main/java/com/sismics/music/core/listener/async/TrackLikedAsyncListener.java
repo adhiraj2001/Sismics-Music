@@ -27,8 +27,11 @@ public class TrackLikedAsyncListener extends TrackAsyncListener{
 
     private void updateTrack(User user, Track track) {
         if (user.getLastFmSessionToken() != null) {
-            final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
-            lastFmService.loveTrack(user, track);
+            this.loveTrack(user, track);
         }
+    }
+
+    private void loveTrack(User user, Track track) {
+        this.lastFmService.loveTrack(user, track);
     }
 }
