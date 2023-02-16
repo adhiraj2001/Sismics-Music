@@ -21,11 +21,12 @@ public class LastFmUpdateTrackPlayCountAsyncListener extends LastFmLovedTrackAsy
         processLastFmLovedTrackEvent(event, this::updateLovedTrack);
     }
 
-
     private void updateLovedTrack(User user) {
-        final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
-        lastFmService.importTrackPlayCount(user);
+        this.importTrackPlayCount(user);
     }
 
+    private void importTrackPlayCount(User user) {
+        this.lastFmService.importTrackPlayCount(user);
+    }
 }
 

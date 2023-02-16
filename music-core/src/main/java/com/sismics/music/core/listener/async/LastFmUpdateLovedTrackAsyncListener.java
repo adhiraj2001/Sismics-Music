@@ -22,10 +22,12 @@ public class LastFmUpdateLovedTrackAsyncListener extends LastFmLovedTrackAsyncLi
         processLastFmLovedTrackEvent(event, this::updateLovedTrack);
     }
 
-
     private void updateLovedTrack(User user) {
-        final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
-        lastFmService.importLovedTrack(user);
+        this.importLovedTrack(user);
+    }
+
+    private void importLovedTrack(User user) {
+        this.lastFmService.importLovedTrack(user);
     }
 
 }
