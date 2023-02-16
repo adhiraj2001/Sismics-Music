@@ -4,11 +4,11 @@ import com.google.common.base.Objects;
 import com.sismics.music.core.model.dbi.Directory;
 
 /**
- * Directory deleted event.
+ * New directory created event.
  *
  * @author jtremeaux
  */
-public class DirectoryDeletedAsyncEvent {
+public class DirectoryAsyncEvent {
     /**
      * New directory.
      */

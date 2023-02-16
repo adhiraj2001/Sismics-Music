@@ -8,8 +8,7 @@ import com.sismics.music.core.dao.dbi.criteria.UserCriteria;
 import com.sismics.music.core.dao.dbi.dto.UserDto;
 import com.sismics.music.core.event.PasswordChangedEvent;
 import com.sismics.music.core.event.UserCreatedEvent;
-import com.sismics.music.core.event.async.LastFmUpdateLovedTrackAsyncEvent;
-import com.sismics.music.core.event.async.LastFmUpdateTrackPlayCountAsyncEvent;
+import com.sismics.music.core.event.async.LastFmLovedTrackAsyncEvent;
 import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.AuthenticationToken;
 import com.sismics.music.core.model.dbi.Playlist;
@@ -558,8 +557,8 @@ public class UserResource extends BaseResource {
         userDao.updateLastFmSessionToken(user);
 
         // Raise a Last.fm registered event
-        AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateLovedTrackAsyncEvent(user));
-        AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateTrackPlayCountAsyncEvent(user));
+        AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
+        AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
 
         // Always return ok
         JsonObject response = Json.createObjectBuilder()

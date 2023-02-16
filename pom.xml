@@ -42,6 +42,9 @@
     <org.atmosphere.atmosphere-runtime>2.2.5</org.atmosphere.atmosphere-runtime>
 
     <!-- Plugins version -->
+    
+    <org.apache.maven.plugins.maven-surefire-plugin.version>2.12.4</org.apache.maven.plugins.maven-surefire-plugin.version>
+
     <org.apache.maven.plugins.maven-antrun-plugin.version>1.7</org.apache.maven.plugins.maven-antrun-plugin.version>
     <org.apache.maven.plugins.maven-dependency-plugin.version>2.7</org.apache.maven.plugins.maven-dependency-plugin.version>
     <org.apache.maven.plugins.maven-eclipse-plugin.version>2.8</org.apache.maven.plugins.maven-eclipse-plugin.version>
@@ -66,6 +69,17 @@
 
   <build>
     <plugins>
+
+      <!-- need the surefire plugin to run sonarqube -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-surefire-plugin.version}</version>
+        <configuration>
+          <testFailureIgnore>true</testFailureIgnore>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>

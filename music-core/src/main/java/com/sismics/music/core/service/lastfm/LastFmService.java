@@ -10,8 +10,7 @@ import com.sismics.music.core.dao.dbi.criteria.TrackCriteria;
 import com.sismics.music.core.dao.dbi.criteria.UserCriteria;
 import com.sismics.music.core.dao.dbi.dto.TrackDto;
 import com.sismics.music.core.dao.dbi.dto.UserDto;
-import com.sismics.music.core.event.async.LastFmUpdateLovedTrackAsyncEvent;
-import com.sismics.music.core.event.async.LastFmUpdateTrackPlayCountAsyncEvent;
+import com.sismics.music.core.event.async.LastFmLovedTrackAsyncEvent;
 import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.Artist;
 import com.sismics.music.core.model.dbi.Track;
@@ -47,8 +46,8 @@ public class LastFmService extends AbstractScheduledService {
             List<UserDto> userList = userDao.findByCriteria(new UserCriteria().setLastFmSessionTokenNotNull(true));
             for (UserDto userDto : userList) {
                 User user = userDao.getActiveById(userDto.getId());
-                AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateLovedTrackAsyncEvent(user));
-                AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateTrackPlayCountAsyncEvent(user));
+                AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
+                AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
             }
         });
     }

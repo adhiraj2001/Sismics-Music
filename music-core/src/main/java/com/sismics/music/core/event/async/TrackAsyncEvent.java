@@ -1,21 +1,28 @@
 package com.sismics.music.core.event.async;
 
 import com.google.common.base.Objects;
+import com.sismics.music.core.model.dbi.Track;
 import com.sismics.music.core.model.dbi.User;
 
 /**
- * Last.fm update loved tracks event.
+ * Track liked event.
  *
  * @author jtremeaux
  */
-public class LastFmUpdateLovedTrackAsyncEvent {
+public class TrackAsyncEvent {
     /**
-     * User.
+     * Originating user.
      */
     private User user;
 
-    public LastFmUpdateLovedTrackAsyncEvent(User user) {
+    /**
+     * Liked track.
+     */
+    private Track track;
+
+    public TrackAsyncEvent(User user, Track track) {
         this.user = user;
+        this.track = track;
     }
 
     /**
@@ -27,10 +34,20 @@ public class LastFmUpdateLovedTrackAsyncEvent {
         return user;
     }
 
+    /**
+     * Getter of track.
+     *
+     * @return track
+     */
+    public Track getTrack() {
+        return track;
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("user", user)
+                .add("track", track)
                 .toString();
     }
 }
