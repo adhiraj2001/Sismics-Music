@@ -27,13 +27,18 @@ public class PlayCompletedAsyncListener extends PlayAsyncListener{
     }
     private void PlayCompletedEvent(String userId, Track track) {
         // Increment the play count
-        UserTrackDao userTrackDao = new UserTrackDao();
-        userTrackDao.incrementPlayCount(userId, track.getId());
+        this.incrementPlayCount(userId, track.getId());
 
-        final User user = new UserDao().getActiveById(userId);
-        if (user != null && user.getLastFmSessionToken() != null) {
-            final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
-            lastFmService.scrobbleTrack(user, track);
+        this.scrobbleTrack(track);
+    }
+
+    private void incrementPlayCount(String userId, String trackId) {
+        this.userTrackDao.incrementPlayCount(userId, trackId);
+    }
+
+    private void scrobbleTrack(Track track) {
+        if (this.user != null && this.user.getLastFmSessionToken() != null) {
+            this.lastFmService.scrobbleTrack(this.user, track);
         }
     }
 }

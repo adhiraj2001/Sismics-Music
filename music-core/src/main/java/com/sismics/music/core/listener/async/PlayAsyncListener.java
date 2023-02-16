@@ -24,7 +24,11 @@ public abstract class PlayAsyncListener {
     /**
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(PlayCompletedAsyncListener.class);
+    protected static final Logger log = LoggerFactory.getLogger(PlayCompletedAsyncListener.class);
+
+    protected UserTrackDao userTrackDao;
+    protected User user;
+    protected LastFmService lastFmService;
 
     /**
      * Process the event.
@@ -39,6 +43,10 @@ public abstract class PlayAsyncListener {
 
         final String userId = event.getUserId();
         final Track track = event.getTrack();
+
+        this.userTrackDao = new UserTrackDao();
+        this.user = new UserDao().getActiveById(userId);
+        this.lastFmService = AppContext.getInstance().getLastFmService();
 
         TransactionUtil.handle(() -> {
             operation.accept(userId, track);

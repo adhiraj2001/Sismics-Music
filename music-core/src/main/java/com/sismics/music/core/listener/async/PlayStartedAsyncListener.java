@@ -25,10 +25,16 @@ public class PlayStartedAsyncListener extends PlayAsyncListener{
         processPlayEvent(event, this::PlayStartedEvent);
     }
     private void PlayStartedEvent(String userId, Track track) {
-        final User user = new UserDao().getActiveById(userId);
-        if (user != null && user.getLastFmSessionToken() != null) {
-            final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
-            lastFmService.nowPlayingTrack(user, track);
+        this.nowPlayingTrack(track);
+    }
+
+    private void nowPlayingTrack(final Track track) {
+        if (this.user != null && this.user.getLastFmSessionToken() != null) {
+            if (this.log.isInfoEnabled()) {
+                this.log.info("Now playing track: " + track.toString());
+            }
+
+            this.lastFmService.nowPlayingTrack(this.user, track);
         }
     }
 }
