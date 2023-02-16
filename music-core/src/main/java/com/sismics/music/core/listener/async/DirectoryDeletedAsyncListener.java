@@ -19,7 +19,7 @@ public class DirectoryDeletedAsyncListener extends DirectoryAsyncListener {
      * @param event New directory created event
      */
     @Subscribe
-    public void onDirectoryCreated(final DirectoryAsyncEvent event) throws Exception {
+    public void onDirectoryDeleted(final DirectoryAsyncEvent event) throws Exception {
         processDirectoryEvent(event, this::updateCollection);
     }
 
