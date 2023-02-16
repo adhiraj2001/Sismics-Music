@@ -24,9 +24,25 @@ public class DirectoryCreatedAsyncListener extends DirectoryAsyncListener {
     }
 
     private void updateCollection(Directory directory) {
-        CollectionService collectionService = AppContext.getInstance().getCollectionService();
-        collectionService.addDirectoryToIndex(directory);
-        AppContext.getInstance().getCollectionWatchService().watchDirectory(directory);
-        collectionService.updateScore();
+        // Index new directory
+        this.indexNewDirectory(directory);
+
+        // Watch new directory
+        this.watchNewDirectory(directory);
+
+        // Update the scores
+        this.updateCollectionScore();
+    }
+
+    private void indexNewDirectory(Directory directory) {
+        this.collectionService.addDirectoryToIndex(directory);
+    }
+
+    private void watchNewDirectory(Directory directory) {
+        this.collectionWatchService.watchDirectory(directory);
+    }
+
+    private void updateCollectionScore() {
+        this.collectionService.updateScore();
     }
 }

@@ -24,11 +24,18 @@ public class DirectoryDeletedAsyncListener extends DirectoryAsyncListener {
     }
 
     private void updateCollection(Directory directory) {
-            // Stop watching the directory
-            AppContext.getInstance().getCollectionWatchService().unwatchDirectory(directory);
+        // Stop watching the directory
+        this.unwatchDirectory(directory);
 
-            // Remove directory from index
-            CollectionService collectionService = AppContext.getInstance().getCollectionService();
-            collectionService.removeDirectoryFromIndex(directory);
+        // Remove directory from index
+        this.removeDirectory(directory);
+    }
+
+    private void removeDirectory(Directory directory) {
+        this.collectionService.removeDirectoryFromIndex(directory);
+    }
+
+    private void unwatchDirectory(Directory directory) {
+        this.collectionWatchService.unwatchDirectory(directory);
     }
 }
