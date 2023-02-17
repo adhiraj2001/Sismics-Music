@@ -37,7 +37,7 @@ public class DBIF {
             dbi.registerMapper(new DirectoryMapper());
             dbi.registerMapper(new LocaleMapper());
             dbi.registerMapper(new PlaylistMapper());
-            dbi.registerMapper(new PlaylistTrackMapper());
+            // dbi.registerMapper(new PlaylistTrackMapper());
             dbi.registerMapper(new RolePrivilegeMapper());
             dbi.registerMapper(new RoleMapper());
             dbi.registerMapper(new TrackMapper());
