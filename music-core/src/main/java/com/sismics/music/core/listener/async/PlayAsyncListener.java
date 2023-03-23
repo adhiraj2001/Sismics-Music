@@ -1,6 +1,5 @@
 package com.sismics.music.core.listener.async;
 
-import com.google.common.eventbus.Subscribe;
 import com.sismics.music.core.dao.dbi.UserDao;
 import com.sismics.music.core.dao.dbi.UserTrackDao;
 import com.sismics.music.core.event.async.PlayEvent;
@@ -35,7 +34,6 @@ public abstract class PlayAsyncListener {
      *
      * @param playCompletedEvent Play completed event
      */
-    @Subscribe
     public void processPlayEvent(PlayEvent event, BiConsumer<String, Track> operation){
         if (log.isInfoEnabled()) {
             log.info(event.getClass().getSimpleName() + ": " + event.toString());

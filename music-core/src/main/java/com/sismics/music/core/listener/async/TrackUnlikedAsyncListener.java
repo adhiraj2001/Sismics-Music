@@ -2,11 +2,8 @@ package com.sismics.music.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
 import com.sismics.music.core.event.async.TrackAsyncEvent;
-import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.Track;
 import com.sismics.music.core.model.dbi.User;
-import com.sismics.music.core.service.lastfm.LastFmService;
-
 
 /**
  * Track liked listener.

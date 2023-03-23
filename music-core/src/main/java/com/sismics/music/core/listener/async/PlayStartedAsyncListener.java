@@ -1,12 +1,8 @@
 package com.sismics.music.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
-import com.sismics.music.core.dao.dbi.UserDao;
 import com.sismics.music.core.event.async.PlayEvent;
-import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.Track;
-import com.sismics.music.core.model.dbi.User;
-import com.sismics.music.core.service.lastfm.LastFmService;
 
 /**
  * Play completed listener.
@@ -30,8 +26,8 @@ public class PlayStartedAsyncListener extends PlayAsyncListener{
 
     private void nowPlayingTrack(final Track track) {
         if (this.user != null && this.user.getLastFmSessionToken() != null) {
-            if (this.log.isInfoEnabled()) {
-                this.log.info("Now playing track: " + track.toString());
+            if (log.isInfoEnabled()) {
+                log.info("Now playing track: " + track.toString());
             }
 
             this.lastFmService.nowPlayingTrack(this.user, track);

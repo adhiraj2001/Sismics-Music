@@ -1,7 +1,6 @@
 package com.sismics.music.core.listener.async;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.eventbus.Subscribe;
 import com.sismics.music.core.event.async.LastFmLovedTrackAsyncEvent;
 import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.User;
@@ -31,11 +30,10 @@ public abstract class LastFmLovedTrackAsyncListener {
      *
      * @param lastFmUpdateLovedTrackAsyncEvent Update loved track event
      */
-    @Subscribe
     public void processLastFmLovedTrackEvent(LastFmLovedTrackAsyncEvent event, Consumer<User> operation)  {
         
-        if (this.log.isInfoEnabled()) {
-            this.log.info(event.getClass().getSimpleName() + ": " + event.toString());
+        if (log.isInfoEnabled()) {
+            log.info(event.getClass().getSimpleName() + ": " + event.toString());
         }
 
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -47,8 +45,8 @@ public abstract class LastFmLovedTrackAsyncListener {
             operation.accept(user);
         });
 
-        if (this.log.isInfoEnabled()) {
-            this.log.info(MessageFormat.format("Last.fm update loved track event completed in {0}", stopwatch));
+        if (log.isInfoEnabled()) {
+            log.info(MessageFormat.format("Last.fm update loved track event completed in {0}", stopwatch));
         }
     }
 }

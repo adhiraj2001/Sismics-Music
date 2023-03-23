@@ -1,7 +1,6 @@
 package com.sismics.music.core.listener.async;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.eventbus.Subscribe;
 import com.sismics.music.core.event.async.TrackAsyncEvent;
 import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.Track;
@@ -32,10 +31,9 @@ public abstract class TrackAsyncListener {
      *
      * @param trackLikedAsyncEvent New directory created event
      */
-    @Subscribe
     public void processTrackEvent(TrackAsyncEvent event, BiConsumer<User, Track> operation){
-        if (this.log.isInfoEnabled()) {
-            this.log.info(event.getClass().getSimpleName() + ": " + event.toString());
+        if (log.isInfoEnabled()) {
+            log.info(event.getClass().getSimpleName() + ": " + event.toString());
         }
 
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -49,8 +47,8 @@ public abstract class TrackAsyncListener {
             operation.accept(user, track);
         });
 
-        if (this.log.isInfoEnabled()) {
-            this.log.info(MessageFormat.format("Track liked completed in {0}", stopwatch));
+        if (log.isInfoEnabled()) {
+            log.info(MessageFormat.format("Track liked completed in {0}", stopwatch));
         }
     }
 }

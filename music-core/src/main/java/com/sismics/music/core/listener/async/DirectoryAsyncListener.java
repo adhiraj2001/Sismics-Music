@@ -23,7 +23,7 @@ public abstract class DirectoryAsyncListener {
     /**
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(DirectoryAsyncListener.class);
+    private final Logger log = LoggerFactory.getLogger(DirectoryAsyncListener.class);
     
     protected CollectionService collectionService;
     protected CollectionWatchService collectionWatchService;
@@ -35,8 +35,8 @@ public abstract class DirectoryAsyncListener {
      * @param operation Operation to perform on the directory
      */
     protected void processDirectoryEvent(DirectoryAsyncEvent event, Consumer<Directory> operation) {
-        if (this.log.isInfoEnabled()) {
-            this.log.info(event.getClass().getSimpleName() + ": " + event.toString());
+        if (log.isInfoEnabled()) {
+            log.info(event.getClass().getSimpleName() + ": " + event.toString());
         }
 
         Stopwatch stopwatch = Stopwatch.createStarted();
