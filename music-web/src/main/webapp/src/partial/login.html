@@ -18,21 +18,22 @@
 
       <div class="checkbox">
         <label>
-          <input type="checkbox" ng-model="user.remember" /> Remember me
+          <input type="checkbox" ng-model="user.remember"/> Remember me
         </label>
       </div>
 
-      <!-- <button type="submit" class="btn btn-primary btn-block" ng-click="login()">
+      <button type="submit" class="btn btn-primary btn-block" ng-click="login()">
         <span class="glyphicon glyphicon-ok"></span> Sign in
-      </button> -->
-
-      <!-- <p class="text-center">
-        Don't have an account? <a href="#/register">Register</a>
-      </p> -->
-
-      <button type="submit" class="btn btn-primary btn-block" ng-click="goto_register()">
-        <span class="glyphicon glyphicon-pencil"></span> Register
       </button>
+
+      <p class="text-center">
+        Don't have an account? <a href="#/register" ng-click="goto_register($event)">Register</a>
+      </p>
+
+      <!-- <button type="submit" class="btn btn-primary btn-block" ng-click="goto_register()">
+        <span class="glyphicon glyphicon-pencil"></span> Register
+      </button> -->
     </form>
+
   </div>
 </div>
