@@ -52,6 +52,11 @@ public class AppContext {
     private EventBus lastFmEventBus;
 
     /**
+     * Do all Spotify operations in this thread, because of rate limitation.
+     */
+    private EventBus spotifyEventBus;
+
+    /**
      * Collection service.
      */
     private CollectionService collectionService;
@@ -254,6 +259,15 @@ public class AppContext {
      */
     public EventBus getLastFmEventBus() {
         return lastFmEventBus;
+    }
+
+        /**
+     * Getter of spotifyEventBus.
+     *
+     * @return spotifyEventBus
+     */
+    public EventBus getSpotifyEventBus() {
+        return spotifyEventBus;
     }
 
     /**
