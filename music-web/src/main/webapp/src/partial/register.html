@@ -1,22 +1,22 @@
-<div class="row d-flex justify-content-center">
+<div class="row">
+  <div class="col-sm-offset-4 col-sm-4">
 
   <p class="text-center text-danger">
     <span class="glyphicon glyphicon-warning-sign"></span>
     Music is not secured. Please register with that in mind.
   </p>
 
+  <h3 class="text-center"> <u> Register </u> </h3>
 
-  <form class="form-horizontal" name="editUserForm" novalidate ng-click="editUserForm.submitted = true">
+  <form name="editUserForm" novalidate ng-click="editUserForm.submitted = true">
 
     <div class="form-group" ng-class="{ 'has-error': !editUserForm.username.$valid && editUserForm.submitted, success: editUserForm.username.$valid }">
 
-      <label class="col-sm-2 control-label" for="inputUsername">Username</label>
-      <div class="col-sm-7">
+      <label class="sr-only" for="inputUsername">Username</label>
         <input name="username" type="text" id="inputUsername" required class="form-control"
               ng-minlength="3" ng-maxlength="50" placeholder="Username" ng-model="user.username"/>
-      </div>
 
-      <div class="col-sm-3" ng-show="editUserForm.submitted">
+      <div ng-show="editUserForm.submitted">
         <span class="help-block" ng-show="editUserForm.username.$error.required">Required</span>
         <span class="help-block" ng-show="editUserForm.username.$error.minlength">Too short</span>
         <span class="help-block" ng-show="editUserForm.username.$error.maxlength">Too long</span>
@@ -27,13 +27,11 @@
 
     <div class="form-group" ng-class="{ 'has-error': !editUserForm.email.$valid && editUserForm.submitted, success: editUserForm.email.$valid }">
 
-      <label class="col-sm-2 control-label" for="inputEmail">E-mail</label>
-      <div class="col-sm-7">
+      <label class="sr-only" for="inputEmail">E-mail</label>
         <input name="email" type="email" id="inputEmail" required class="form-control"
               ng-minlength="3" ng-maxlength="50" placeholder="E-mail" ng-model="user.email"/>
-      </div>
 
-      <div class="col-sm-3" ng-show="editUserForm.submitted">
+      <div ng-show="editUserForm.submitted">
         <span class="help-block" ng-show="editUserForm.email.$error.required">Required</span>
         <span class="help-block" ng-show="editUserForm.email.$error.email">Must be a valid e-mail</span>
         <span class="help-block" ng-show="editUserForm.email.$error.minlength">Too short</span>
@@ -45,13 +43,11 @@
 
     <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid && editUserForm.submitted, success: editUserForm.password.$valid }">
 
-      <label class="col-sm-2 control-label" for="inputPassword">Password</label>
-      <div class="col-sm-7">
+      <label class="sr-only" for="inputPassword">Password</label>
         <input name="password" type="password" id="inputPassword" class="form-control"
               ng-minlength="8" ng-maxlength="50" placeholder="Password" ng-model="user.password"/>
-      </div>
 
-      <div class="col-sm-3" ng-show="editUserForm.submitted">
+      <div ng-show="editUserForm.submitted">
         <span class="help-block" ng-show="editUserForm.password.$error.required">Required</span>
         <span class="help-block" ng-show="editUserForm.password.$error.minlength">Too short</span>
         <span class="help-block" ng-show="editUserForm.password.$error.maxlength">Too long</span>
@@ -62,14 +58,12 @@
 
     <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid && editUserForm.submitted, success: editUserForm.passwordconfirm.$valid }">
 
-      <label class="col-sm-2 control-label" for="inputPasswordConfirm">Password (confirm)</label>
-      <div class="col-sm-7">
+      <label class="sr-only" for="inputPasswordConfirm">Password (confirm)</label>
         <input name="passwordconfirm" type="password" id="inputPasswordConfirm" class="form-control"
               ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
               placeholder="Password (confirm)" ng-model="user.passwordconfirm"/>
-      </div>
 
-      <div class="col-sm-3" ng-show="editUserForm.submitted">
+      <div ng-show="editUserForm.submitted">
         <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator">Password and password confirmation must match</span>
       </div>
 
@@ -77,7 +71,6 @@
 
 
     <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
 
         <button type="submit" class="btn btn-primary" ng-click="register(user)" ng-disabled="!editUserForm.$valid">
           <span class="glyphicon glyphicon-ok"></span> Register
@@ -87,73 +80,15 @@
           <span class="glyphicon glyphicon-erase"></span> Reset
         </button>
 
-        <p>
-          Go back to <a href="#/login" ng-click="goto_login($event)">Login</a>
-        </p>
-
-      </div>
     </div>
 
   </form>
 
+  <p class="text-center" style="font-size:120%;">
+    Go back to <a href="#/login" ng-click="goto_login($event)">Login</a>
+  </p>
 
   <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>
 
-</div>
-
-
-<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-
-<!-- <div class="row">
-  <div class="col-sm-offset-5 col-sm-3">
-
-    <p class="text-center text-danger">
-      <span class="glyphicon glyphicon-warning-sign"></span>
-      Music is not secured. Please register with that in mind.
-    </p>
-
-    <form>
-      <div class="form-group">
-        <label class="sr-only" for="inputUsername">Username</label>
-        <input class="form-control" type="text" id="inputUsername" placeholder="Username" ng-model="user.username" />
-      </div>
-
-      <div class="form-group">
-        <label class="sr-only" for="inputEmail">E-mail</label>
-        <input class="form-control" type="text" id="inputEmail" placeholder="name@email.com" ng-model="user.email" />
-      </div>
-
-      <div class="form-group">
-        <label class="sr-only" for="inputPassword">Password</label>
-        <input class="form-control" type="password" id="inputPassword" placeholder="Password" ng-model="user.password" />
-      </div>
-
-      <div class="form-group">
-        <label class="sr-only" for="inputPassword">Password</label>
-        <input class="form-control" type="password" id="inputPassword" placeholder="Password" ng-model="user.password_confirm" />
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-block" ng-click="register(user)">
-        <span class="glyphicon glyphicon-ok"></span> Register
-      </button>
-
-      <p class="text-center">
-        Go back to <a href="#/login" ng-click="goto_login($event)">Login</a>
-      </p>
-
-      <button type="submit" class="btn btn-primary btn-block" ng-click="goto_login()">
-        <span class="glyphicon glyphicon-pencil"></span> Login
-      </button>
-    </form>
-
-    <div>
-      <p> username: {{ reg.username }} </p>
-      <p> email: {{ reg.email }} </p>
-      <p> passwd: {{ reg.password }} </p>
-      <p> re_passwd: {{ reg.password_confirm }} </p>
-      <p> response: {{ reg.valid }} </p>
-    </div>
-
   </div>
-</div> -->
+</div>

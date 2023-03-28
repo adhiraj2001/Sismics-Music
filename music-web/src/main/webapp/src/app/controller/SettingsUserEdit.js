@@ -52,7 +52,7 @@ angular.module('music').controller('SettingsUserEdit', function($scope, $dialog,
 
     $dialog.messageBox(title, msg, btns, function(result) {
       if (result == 'ok') {
-        Restangular.one('user', $stateParams.username).remove().then(function() {
+        Restangular.one('user', $stateParams.username).remove('', {}, {}, {'Content-Type': 'application/json', 'Accept': 'application/json'}).then(function() {
           $scope.loadUsers();
           $state.transitionTo('main.settingsuser');
         }, function () {
