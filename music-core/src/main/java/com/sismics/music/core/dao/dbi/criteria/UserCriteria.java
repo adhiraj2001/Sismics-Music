@@ -20,7 +20,7 @@ public class UserCriteria {
         return this;
     }
 
-        /**
+    /**
      * User is registered on Spotify.
      */
     private boolean spotifySessionTokenNotNull;

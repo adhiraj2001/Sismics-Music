@@ -15,6 +15,7 @@ import com.sismics.music.core.model.dbi.AuthenticationToken;
 import com.sismics.music.core.model.dbi.Playlist;
 import com.sismics.music.core.model.dbi.User;
 import com.sismics.music.core.service.lastfm.LastFmService;
+import com.sismics.music.core.service.spotify.SpotifyService;
 import com.sismics.music.core.util.dbi.PaginatedList;
 import com.sismics.music.core.util.dbi.PaginatedLists;
 import com.sismics.music.core.util.dbi.SortCriteria;
@@ -441,6 +442,7 @@ public class UserResource extends BaseResource {
                     .add("email", user.getEmail())
                     .add("locale", user.getLocaleId())
                     .add("lastfm_connected", user.getLastFmSessionToken() != null)
+                    .add("spotify_connected", user.getSpotifyAccessToken() != null)
                     .add("first_connection", user.isFirstConnection());
             JsonArrayBuilder privileges = Json.createArrayBuilder();
             for (String privilege : ((UserPrincipal) principal).getPrivilegeSet()) {
@@ -623,52 +625,40 @@ public class UserResource extends BaseResource {
                 .build();
         return Response.ok().entity(response).build();
     }
-}
 
-// // -------------- SPOTIFY --------------
-// /**
-//      * Authenticates a user on Spotify.
-//      *
-//      * @param spotifyUsername Spotify username
-//      * @param spotifyPassword Spotify password
-//      * @return Response
-//      */
-//     @PUT
-//     @Path("spotify")
-//     public Response registerSpotify(
-//             @FormParam("username") String spotifyUsername,
-//             @FormParam("password") String spotifyPassword) {
-//         if (!authenticate()) {
-//             throw new ForbiddenClientException();
-//         }
+// -------------- SPOTIFY --------------
+/**
+     * Authenticates a user on Spotify.
+     *
+     * @param spotifyUsername Spotify username
+     * @param spotifyPassword Spotify password
+     * @return Response
+     */
+    @PUT
+    @Path("spotify")
+    public Response registerSpotify(){
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
 
-//         Validation.required(spotifyUsername, "username");
-//         Validation.required(spotifyPassword, "password");
+        // Get the value of the session token
+        final SpotifyService spotifyService = AppContext.getInstance().getSpotifyService();
 
-//         // Get the value of the session token
-//         final spotifyService spotifyService = AppContext.getInstance().getSpotifyService();
-//         Session session = spotifyService.createSession(spotifyUsername, spotifyPassword);
-//         // XXX We should be able to distinguish invalid user credentials from invalid api key -- update Authenticator?
-//         if (session == null) {
-//             throw new ClientException("InvalidCredentials", "The supplied Last.fm credentials is invalid");
-//         }
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveById(principal.getId());
 
-//         // Store the session token (it has no expiry date)
-//         UserDao userDao = new UserDao();
-//         User user = userDao.getActiveById(principal.getId());
-//         user.setSpotifySessionToken(session.getKey());
-//         userDao.updateSpotifySessionToken(user);
+        spotifyService.authorizationCodeUri_Sync(user);
+        spotifyService.authorizationCode_Sync(user);
 
-//         // Raise a Last.fm registered event
-//         AppContext.getInstance().getSpotifyEventBus().post(new SpotifyUpdateLovedTrackAsyncEvent(user));
-//         AppContext.getInstance().getSpotifyEventBus().post(new SpotifyUpdateTrackPlayCountAsyncEvent(user));
+        // Update tokens
+        userDao.updateSpotifyTokens(user);
 
-//         // Always return ok
-//         JsonObject response = Json.createObjectBuilder()
-//                 .add("status", "ok")
-//                 .build();
-//         return Response.ok().entity(response).build();
-//     }
+        // Always return ok
+        JsonObject response = Json.createObjectBuilder()
+                .add("status", "ok")
+                .build();
+        return Response.ok().entity(response).build();
+    }
 
 //     /**
 //      * Returns the Last.fm information about the connected user.
@@ -701,28 +691,30 @@ public class UserResource extends BaseResource {
 //         return renderJson(response);
 //     }
     
-//     /**
-//      * Disconnect the current user from Last.fm.
-//      *  
-//      * @return Response
-//      */
-//     @DELETE
-//     @Path("lastfm")
-//     public Response unregisterLastFm() {
-//         if (!authenticate()) {
-//             throw new ForbiddenClientException();
-//         }
+    /**
+     * Disconnect the current user from Spotify.
+     *  
+     * @return Response
+     */
+    @DELETE
+    @Path("spotify")
+    public Response unregisterSpotify() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
 
-//         // Remove the session token
-//         UserDao userDao = new UserDao();
-//         User user = userDao.getActiveById(principal.getId());
-//         user.setLastFmSessionToken(null);
-//         userDao.updateLastFmSessionToken(user);
+        // Remove the session token
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveById(principal.getId());
+        user.setSpotifyAccessToken(null);
+        user.setSpotifyRefreshToken(null);
+        user.setSpotifyAuthCode(null);
+        userDao.updateSpotifyTokens(user);
 
-//         // Always return ok
-//         JsonObject response = Json.createObjectBuilder()
-//                 .add("status", "ok")
-//                 .build();
-//         return Response.ok().entity(response).build();
-//     }
-// }
+        // Always return ok
+        JsonObject response = Json.createObjectBuilder()
+                .add("status", "ok")
+                .build();
+        return Response.ok().entity(response).build();
+    }
+}

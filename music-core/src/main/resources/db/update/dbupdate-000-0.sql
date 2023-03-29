@@ -221,6 +221,10 @@ create memory table T_USER (
    EMAIL                varchar(100)         not null,
    MAXBITRATE           integer              null default '0',
    LASTFMSESSIONTOKEN   varchar(100)         null default '0',
+   SPOTIFYACCESSTOKEN   varchar(100)         null default '0',
+   SPOTIFYREFRESHTOKEN  varchar(100)         null default '0',
+   SPOTIFYREFRESHTIME   datetime             null,
+   SPOTIFYAUTHCODE      varchar(100)         null default '0',
    LASTFMACTIVE         bit                  not null default '0',
    FIRSTCONNECTION      bit                  not null default '0',
    CREATEDATE           datetime             not null,
@@ -397,6 +401,9 @@ on delete restrict on update restrict;
 
 insert into t_config(id,value) values('LAST_FM_API_KEY','7119a7b5c4455bbe8196934e22358a27');
 insert into t_config(id,value) values('LAST_FM_API_SECRET','30dce5dfdb01b87af6038dd36f696f8a');
+insert into t_config(id,value) values('SPOTIFY_API_KEY', '5d222579ce9241b6aa234b6609071a8f');
+insert into t_config(id,value) values('SPOTIFY_API_SECRET', 'be4ca711e6f244df93e47a95e0ddda06');
+insert into t_config(id,value) values('SPOTIFY_API_REDIRECT_URI', 'http://localhost:8080/');
 insert into t_config(id,value) values('DB_VERSION', '0');
 insert into t_config(id,value) values('LUCENE_DIRECTORY_STORAGE', 'FILE');
 insert into t_privilege(id) values('ADMIN');
