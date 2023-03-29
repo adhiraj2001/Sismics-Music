@@ -17,14 +17,21 @@ import com.sismics.music.core.model.dbi.User;
 import com.sismics.music.core.util.ConfigUtil;
 import com.sismics.music.core.util.TransactionUtil;
 import com.sismics.util.spotify.SpotifyUtil;
+import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.SpotifyHttpManager;
+import com.wrapper.spotify.exceptions.SpotifyWebApiException;
+import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
+import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
+import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 
-import se.michaelthelin.spotify.SpotifyApi;
-import se.michaelthelin.spotify.SpotifyHttpManager;
-import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
-import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
-import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
-import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
-import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
+// import se.michaelthelin.spotify.SpotifyApi;
+// import se.michaelthelin.spotify.SpotifyHttpManager;
+// import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+// import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+// import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
+// import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
+// import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 
 import org.apache.hc.core5.http.ParseException;
 
@@ -53,6 +60,22 @@ public class SpotifyService extends AbstractScheduledService {
      */
     private static final Logger log = LoggerFactory.getLogger(SpotifyService.class);
 
+    private String clientId;
+    private String clientSecret;
+    private URI redirectUri;
+
+    private int expires_in;
+
+    @Override
+    protected void startUp() throws Exception {
+        log.info("Starting SpotifyService");
+        clientId = ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_KEY);
+        clientSecret = ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_SECRET);
+        redirectUri = SpotifyHttpManager.makeUri(ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_REDIRECT_URI));
+    
+        expires_in = 3500;
+    }
+
     @Override
     protected void runOneIteration() throws Exception {
         TransactionUtil.handle(() -> {
@@ -72,22 +95,7 @@ public class SpotifyService extends AbstractScheduledService {
     protected Scheduler scheduler() {
         return Scheduler.newFixedDelaySchedule(expires_in, expires_in, TimeUnit.SECONDS);
     }
-
-    /**
-     * Create a new user session.
-     *
-     * @param spotifyUsername User name
-     * @param spotifyPassword Password
-     * @return Spotify session
-     */
-
-
-    private String clientId = ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_KEY);
-    private String clientSecret = ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_SECRET);
-    private URI redirectUri = SpotifyHttpManager.makeUri(ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_REDIRECT_URI));
-
-    private int expires_in = 3500;
-
+    
     public int getExpires_in() {
         return expires_in;
     }

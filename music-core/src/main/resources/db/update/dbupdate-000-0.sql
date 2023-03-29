@@ -39,7 +39,7 @@ create unique index IDX_PK_ARTIST on T_ARTIST (
 create memory table T_AUTHENTICATION_TOKEN (
    ID                   varchar(36)          not null,
    USER_ID              varchar(36)          not null,
-   LONGLASTED           bit                  not null,
+   LONGLASTED           bit                  noft null,
    CREATEDATE           datetime             not null,
    LASTCONNECTIONDATE   datetime             null,
    constraint PK_T_AUTHENTICATION_TOKEN primary key (ID)
@@ -221,12 +221,12 @@ create memory table T_USER (
    EMAIL                varchar(100)         not null,
    MAXBITRATE           integer              null default '0',
    LASTFMSESSIONTOKEN   varchar(100)         null default '0',
-   SPOTIFYACCESSTOKEN   varchar(100)         null default '0',
-   SPOTIFYREFRESHTOKEN  varchar(100)         null default '0',
-   SPOTIFYREFRESHTIME   datetime             null,
-   SPOTIFYAUTHCODE      varchar(100)         null default '0',
    LASTFMACTIVE         bit                  not null default '0',
    FIRSTCONNECTION      bit                  not null default '0',
+   SPOTIFYACCESSTOKEN   varchar(500)         null default '0',
+   SPOTIFYREFRESHTOKEN  varchar(500)         null default '0',
+   SPOTIFYREFRESHTIME   datetime             null,
+   SPOTIFYAUTHCODE      varchar(100)         null default '0',
    CREATEDATE           datetime             not null,
    DELETEDATE           datetime             null,
    constraint PK_T_USER primary key (ID)

@@ -1,6 +1,6 @@
 package com.sismics.util.spotify;
 
-import se.michaelthelin.spotify.*;
+import com.wrapper.spotify.*;
 
 /**
  * Last.fm utilities.

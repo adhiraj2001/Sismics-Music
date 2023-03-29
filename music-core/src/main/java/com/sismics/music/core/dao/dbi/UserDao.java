@@ -164,7 +164,7 @@ public class UserDao extends BaseDao<UserDto, UserCriteria> {
     public User updateSpotifyTokens(User user) {
         final Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("update t_user u set " +
-                " u.spotifysessiontoken = :spotifySessionToken, " +
+                " u.spotifyaccesstoken = :spotifyAccessToken, " +
                 " u.spotifyrefreshtoken = :spotifyRefreshToken " +
                 " u.spotifyrefreshtime = :spotifyRefreshTime " +
                 " u.spotifyauthcode = :spotifyAuthCode " +

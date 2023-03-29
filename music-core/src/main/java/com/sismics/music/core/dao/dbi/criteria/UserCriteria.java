@@ -26,7 +26,7 @@ public class UserCriteria {
     private boolean spotifySessionTokenNotNull;
 
     public boolean isSpotifySessionTokenNotNull() {
-        return this.lastFmSessionTokenNotNull;
+        return this.spotifySessionTokenNotNull;
     }
 
     public UserCriteria setSpotifySessionTokenNotNull(boolean spotifySessionTokenNotNull) {
