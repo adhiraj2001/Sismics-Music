@@ -5,6 +5,8 @@ import com.sismics.music.core.dao.dbi.PlaylistDao;
 
 import java.util.UUID;
 
+import com.sismics.music.core.constant.AccessType;
+
 /**
  * Playlist entity.
  * A playlist is either the list of current played tracks (the "default" playlist), or a saved playlist with a name.
@@ -27,16 +29,24 @@ public class Playlist {
      */
     private String name;
 
+    /**
+     * Playlist access.
+     */
+    private AccessType access;
+
     public Playlist() {
+        access = AccessType.PRIVATE;
     }
 
     public Playlist(String id) {
         this.id = id;
+        access = AccessType.PRIVATE;
     }
 
     public Playlist(String id, String userId) {
         this.id = id;
         this.userId = userId;
+        access = AccessType.PRIVATE;
     }
 
     /**
@@ -83,6 +93,21 @@ public class Playlist {
         this.userId = userId;
     }
 
+    public AccessType getAccess() {
+        return access;
+    }
+
+    public void setAccess(String access) {
+        switch(access) {
+            case "PUBLIC":
+                this.access = AccessType.PUBLIC;
+            case "PRIVATE":
+                this.access = AccessType.PRIVATE;
+            default:
+                throw new IllegalArgumentException("Invalid access: " + access);
+        }
+    }
+
     /**
      * Create a named playlist.
      *
@@ -103,6 +128,15 @@ public class Playlist {
     }
 
     /**
+     * Update a playlist access.
+     *
+     * @param playlist The playlist to update
+     */
+    public static void updatePlaylistAccess(Playlist playlist) {
+        new PlaylistDao().updateAccess(playlist);
+    }
+
+    /**
      * Delete a named playlist.
      *
      * @param playlist The playlist to delete
@@ -117,6 +151,8 @@ public class Playlist {
                 .add("id", id)
                 .add("userId", userId)
                 .add("name", name)
+                // .add("access", access)
+                // .add("access", access.toString())
                 .toString();
     }
 }

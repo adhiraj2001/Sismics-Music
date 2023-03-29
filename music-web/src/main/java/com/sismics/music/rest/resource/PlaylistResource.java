@@ -103,6 +103,56 @@ public class PlaylistResource extends BaseResource {
     }
 
     /**
+     * Update a playlist access.
+     *
+     * @param access The access
+     * @return Response
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}/access")
+    public Response editAccess(
+            @PathParam("id") String playlistId,
+            @FormParam("access") String access) {
+
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        access = access.toUpperCase();
+
+        // Get the playlist
+        PlaylistCriteria playlistCriteria = new PlaylistCriteria()
+                .setUserId(principal.getId());
+        
+        if (DEFAULt_playlist.equals(playlistId)) {
+            playlistCriteria.setDefaultPlaylist(true);
+        } else {
+            playlistCriteria.setDefaultPlaylist(false);
+            playlistCriteria.setId(playlistId);
+        }
+
+        PlaylistDto playlistDto = new PlaylistDao().findFirstByCriteria(playlistCriteria);
+        notFoundIfNull(playlistDto, "Playlist: " + playlistId);
+        
+        // Update the playlist
+        Playlist playlist = new Playlist(playlistDto.getId());
+
+        if (playlistDto.getAccess().equals(access)) {
+            return okJson();
+        }
+
+        playlist.setAccess(access);
+
+        // Static method access in static way
+        // Using Playlist class directly and not object instance
+        Playlist.updatePlaylistAccess(playlist);
+
+        // Always return OK
+        return okJson();
+    }
+
+
+    /**
      * Inserts a track in the playlist.
      *
      * @param playlistId Playlist ID
@@ -568,8 +618,12 @@ public class PlaylistResource extends BaseResource {
                             .add("name", trackDto.getAlbumName())
                             .add("albumart", trackDto.getAlbumArt() != null)));
         }
+
         response.add("tracks", tracks);
         response.add("id", playlist.getId());
+
+        response.add("access", playlist.getAccess().toString().toLowerCase());
+
         if (playlist.getName() != null) {
             response.add("name", playlist.getName());
         }

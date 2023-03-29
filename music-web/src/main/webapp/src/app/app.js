@@ -122,6 +122,15 @@ angular.module('music',
               }
             }
           })
+          // .state('main.playlist.access', {
+          //   url: '/playlist/access/:id',
+          //   views: {
+          //     'content': {
+          //       templateUrl: 'partial/playlist.html',
+          //       controller: 'Playlist'
+          //     }
+          //   }
+          // })
           .state('main.add', {
             url: '/add',
             views: {

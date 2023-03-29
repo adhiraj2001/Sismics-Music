@@ -9,6 +9,19 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
     $scope.playlist = data;
   });
 
+  // $scope.watch('playlist.access', function(newVal) {
+  //   console.log(newVal);
+
+  //   if (newVal == undefined) {
+  //     return;
+  //   }
+
+  //   Restangular.one('playlist', $stateParams.id).post('access', { access: newVal })
+  //     .then(function() {
+  //       $scope.playlist.access = newVal;
+  //   });
+  // });
+
   // Play a single track
   $scope.playTrack = function(track) {
     Playlist.removeAndPlay(track);
