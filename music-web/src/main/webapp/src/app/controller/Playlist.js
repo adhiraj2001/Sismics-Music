@@ -4,23 +4,21 @@
  * Playlist controller.
  */
 angular.module('music').controller('Playlist', function($scope, $state, $stateParams, Restangular, Playlist, NamedPlaylist) {
+
   // Load playlist
   Restangular.one('playlist', $stateParams.id).get().then(function(data) {
     $scope.playlist = data;
+    
+    var accessType = $scope.playlist.access;
+    console.log(accessType);
+
+    $scope.isPublic = (accessType == "public");
   });
 
-  // $scope.watch('playlist.access', function(newVal) {
-  //   console.log(newVal);
 
-  //   if (newVal == undefined) {
-  //     return;
-  //   }
-
-  //   Restangular.one('playlist', $stateParams.id).post('access', { access: newVal })
-  //     .then(function() {
-  //       $scope.playlist.access = newVal;
-  //   });
-  // });
+  $scope.changeAccess = function() {
+    Restangular.one('playlist', $stateParams.id).post('access', { access: $scope.isPublic ? "public" : "private" });
+  };
 
   // Play a single track
   $scope.playTrack = function(track) {
@@ -94,4 +92,5 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
       });
     }
   };
+
 });

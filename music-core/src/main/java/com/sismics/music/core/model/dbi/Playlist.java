@@ -98,13 +98,11 @@ public class Playlist {
     }
 
     public void setAccess(String access) {
-        switch(access) {
-            case "PUBLIC":
-                this.access = AccessType.PUBLIC;
-            case "PRIVATE":
-                this.access = AccessType.PRIVATE;
-            default:
-                throw new IllegalArgumentException("Invalid access: " + access);
+        if ("PUBLIC".equals(access)) {
+            this.access = AccessType.PUBLIC;
+        }
+        else {
+            this.access = AccessType.PRIVATE;
         }
     }
 

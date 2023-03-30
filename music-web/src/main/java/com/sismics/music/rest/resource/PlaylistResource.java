@@ -506,6 +506,11 @@ public class PlaylistResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (PlaylistDto playlist : paginatedList.getResultList()) {
+
+            if("PRIVATE".equals(playlist.getAccess().toString()) && playlist.getUserId() != principal.getId()) {
+                continue;
+            }
+
             items.add(Json.createObjectBuilder()
                     .add("id", playlist.getId())
                     .add("name", playlist.getName())
@@ -515,6 +520,8 @@ public class PlaylistResource extends BaseResource {
 
         response.add("total", paginatedList.getResultCount());
         response.add("items", items);
+        
+        System.err.println(response.toString());        
 
         return renderJson(response);
     }

@@ -83,13 +83,13 @@ public class PlaylistDto {
     }
 
     public void setAccess(String access) {
-        switch(access) {
-            case "PUBLIC":
-                this.access = AccessType.PUBLIC;
-            case "PRIVATE":
-                this.access = AccessType.PRIVATE;
-            default:
-                throw new IllegalArgumentException("Invalid access: " + access);
+        System.err.println(access);
+
+        if ("PUBLIC".equals(access)) {
+            this.access = AccessType.PUBLIC;
+        }
+        else {
+            this.access = AccessType.PRIVATE;
         }
     }
 }

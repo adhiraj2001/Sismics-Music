@@ -93,7 +93,7 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
         handle.createStatement("update t_playlist" +
                 "  set access = :access" +
                 "  where id = :id")
-                .bind("access", playlist.getAccess())
+                .bind("access", playlist.getAccess().toString())
                 .bind("id", playlist.getId())
                 .execute();
     }

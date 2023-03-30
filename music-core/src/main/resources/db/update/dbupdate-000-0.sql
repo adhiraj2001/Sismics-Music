@@ -98,7 +98,7 @@ create cached table T_PLAYLIST (
    ID                   varchar(36)          not null,
    USER_ID              varchar(36)          not null,
    NAME                 varchar(200)         null,
-   ACCESS               varchar(10)          not null default 'PRIVATE',
+   ACCESS               varchar(20)          not null default 'PRIVATE',
    constraint PK_T_PLAYLIST primary key (ID)
 );
 
@@ -307,7 +307,7 @@ references T_USER (ID)
 on delete restrict on update restrict;
 
 -- alter table T_PLAYLIST
---    add column access varchar(10) not null default 'private'; 
+--    add column ACCESS varchar(10) not null default 'PRIVATE'; 
 
 alter table T_PLAYLIST_TRACK
    add constraint fk_plt_playlist_id foreign key (PLAYLIST_ID)
