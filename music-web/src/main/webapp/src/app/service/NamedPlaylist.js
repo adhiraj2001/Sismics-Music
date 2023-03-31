@@ -26,6 +26,17 @@ angular.module('music').factory('NamedPlaylist', function($rootScope, $modal, Re
       });
     },
 
+    // addToPlaylist: function(playlist, tracks) {
+    //   Restangular.one('playlist/' + playlist.id).put({
+    //     id: _.pluck(tracks, 'id'),
+    //     order: null,
+    //     clear: false
+    //   }).then(function() {
+    //     toaster.pop('success', 'Track' + (tracks.length > 1 ? 's' : '') + ' added to ' + playlist.name,
+    //       _.pluck(tracks, 'title').join('\n'));
+    //   });
+    // },
+
     removeTrack: function(playlist, order) {
       return Restangular.one('playlist/' + playlist.id, order).remove();
     },

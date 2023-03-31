@@ -177,15 +177,41 @@ public class PlaylistResource extends BaseResource {
         notFoundIfNull(track, "Track: " + trackId);
 
         // Get the playlist
-        PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
-        if (DEFAULt_playlist.equals(playlistId)) {
-            criteria.setDefaultPlaylist(true);
-        } else {
-            criteria.setDefaultPlaylist(false);
-            criteria.setId(playlistId);
+
+        PlaylistDto playlist = null;
+
+        PlaylistCriteria criteria1 = new PlaylistCriteria()
+            .setDefaultPlaylist(true)
+            .setUserId(principal.getId());
+
+        PlaylistDto playlist1 = new PlaylistDao().findFirstByCriteria(criteria1);
+
+        if ((playlist1 != null) && (DEFAULt_playlist.equals(playlistId))) {
+            playlist = playlist1;
         }
-        PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
+
+        PlaylistCriteria criteria2 = new PlaylistCriteria()
+            .setDefaultPlaylist(false)
+            .setUserId(principal.getId())
+            .setId(playlistId);
+
+        PlaylistDto playlist2 = new PlaylistDao().findFirstByCriteria(criteria2);
+
+        if (playlist2 != null) {
+            playlist = playlist2;
+        }
+
+        PlaylistCriteria criteria3 = new PlaylistCriteria()
+            .setDefaultPlaylist(false)
+            .setPublic(true)
+            .setId(playlistId);
+
+        PlaylistDto playlist3 = new PlaylistDao().findFirstByCriteria(criteria3);
+
+        if (playlist3 != null) {
+            playlist = playlist3;
+        }
+
         notFoundIfNull(playlist, "Playlist: " + playlistId);
 
         PlaylistTrackDao playlistTrackDao = new PlaylistTrackDao();
@@ -205,6 +231,7 @@ public class PlaylistResource extends BaseResource {
         // Output the playlist
         return renderJson(buildPlaylistJson(playlist));
     }
+
 
     /**
      * Inserts tracks in the playlist.
@@ -227,15 +254,41 @@ public class PlaylistResource extends BaseResource {
         Validation.required(idList, "ids");
 
         // Get the playlist
-        PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
-        if (DEFAULt_playlist.equals(playlistId)) {
-            criteria.setDefaultPlaylist(true);
-        } else {
-            criteria.setDefaultPlaylist(false);
-            criteria.setId(playlistId);
+
+        PlaylistDto playlist = null;
+
+        PlaylistCriteria criteria1 = new PlaylistCriteria()
+            .setDefaultPlaylist(true)
+            .setUserId(principal.getId());
+
+        PlaylistDto playlist1 = new PlaylistDao().findFirstByCriteria(criteria1);
+
+        if ((playlist1 != null) && (DEFAULt_playlist.equals(playlistId))) {
+            playlist = playlist1;
         }
-        PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
+
+        PlaylistCriteria criteria2 = new PlaylistCriteria()
+            .setDefaultPlaylist(false)
+            .setUserId(principal.getId())
+            .setId(playlistId);
+
+        PlaylistDto playlist2 = new PlaylistDao().findFirstByCriteria(criteria2);
+
+        if (playlist2 != null) {
+            playlist = playlist2;
+        }
+
+        PlaylistCriteria criteria3 = new PlaylistCriteria()
+            .setDefaultPlaylist(false)
+            .setPublic(true)
+            .setId(playlistId);
+
+        PlaylistDto playlist3 = new PlaylistDao().findFirstByCriteria(criteria3);
+
+        if (playlist3 != null) {
+            playlist = playlist3;
+        }
+
         notFoundIfNull(playlist, "Playlist: " + playlistId);
 
         PlaylistTrackDao playlistTrackDao = new PlaylistTrackDao();
@@ -263,6 +316,7 @@ public class PlaylistResource extends BaseResource {
         return renderJson(buildPlaylistJson(playlist));
     }
     
+
     /**
      * Load a named playlist into the default playlist.
      *
