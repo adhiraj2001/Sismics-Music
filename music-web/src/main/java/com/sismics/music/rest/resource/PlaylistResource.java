@@ -658,7 +658,9 @@ public class PlaylistResource extends BaseResource {
         response.add("id", playlist.getId());
 
         response.add("userId", playlist.getUserId());
+
         response.add("access", playlist.getAccess().toString());
+        response.add("isOwner", (playlist.getUserId() == principal.getId()));
 
         if (playlist.getName() != null) {
             response.add("name", playlist.getName());

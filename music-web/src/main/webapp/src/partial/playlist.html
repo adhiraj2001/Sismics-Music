@@ -10,9 +10,15 @@
       <button class="btn btn-link" ng-click="addAllTracks()"><span class="glyphicon glyphicon-plus"></span> Add all</button>
       <button class="btn btn-link" ng-click="remove()"><span class="glyphicon glyphicon-trash"></span> Delete</button>
 
-      <label>
+      <label ng-show="isOwner">
         <input type="checkbox" ng-model="isPublic" ng-change="changeAccess()" /> Public
       </label>
+
+      <scope ng-show="!isOwner">
+        <b><i>
+          [Public Playlist]
+        </i></b>
+      </scope>
     </div>
 
     <table class="table table-striped table-playing-tracks">
