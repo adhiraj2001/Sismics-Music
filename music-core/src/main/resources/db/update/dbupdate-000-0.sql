@@ -39,7 +39,7 @@ create unique index IDX_PK_ARTIST on T_ARTIST (
 create memory table T_AUTHENTICATION_TOKEN (
    ID                   varchar(36)          not null,
    USER_ID              varchar(36)          not null,
-   LONGLASTED           bit                  noft null,
+   LONGLASTED           bit                  not null,
    CREATEDATE           datetime             not null,
    LASTCONNECTIONDATE   datetime             null,
    constraint PK_T_AUTHENTICATION_TOKEN primary key (ID)

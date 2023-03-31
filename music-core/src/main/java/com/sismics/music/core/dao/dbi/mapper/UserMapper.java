@@ -28,7 +28,7 @@ public class UserMapper extends BaseResultSetMapper<User> {
             "spotifyaccesstoken",
             "spotifyrefreshtoken",
             "spotifyrefreshtime",
-            "spotifyauthtoken",
+            "spotifyauthcode",
             "createdate",
             "deletedate"};
     }
