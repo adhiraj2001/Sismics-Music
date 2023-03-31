@@ -8,16 +8,18 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
   // Load playlist
   Restangular.one('playlist', $stateParams.id).get().then(function(data) {
     $scope.playlist = data;
+
+    // $scope.isOwner = ($scope.user);
     
     var accessType = $scope.playlist.access;
-    console.log(accessType);
 
-    $scope.isPublic = (accessType == "public");
+    $scope.isPublic = (accessType === "PUBLIC");
+    console.log("Playlist isPublic ? : " + $scope.isPublic);
   });
 
 
   $scope.changeAccess = function() {
-    Restangular.one('playlist', $stateParams.id).post('access', { access: $scope.isPublic ? "public" : "private" });
+    Restangular.one('playlist', $stateParams.id).post('access', { access: ($scope.isPublic ? "PUBLIC" : "PRIVATE") });
   };
 
   // Play a single track

@@ -495,19 +495,21 @@ public class PlaylistResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        // Get the playlists
+        //! Get the playlists (Logic/Criteria of fetch important)
         PaginatedList<PlaylistDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
-        new PlaylistDao().findByCriteria(paginatedList, new PlaylistCriteria()
-                .setDefaultPlaylist(false)
-                .setUserId(principal.getId()), sortCriteria, null);
+        PlaylistCriteria criteria = new PlaylistCriteria()
+                .setDefaultPlaylist(false);
+        
+        PlaylistDao playlistDao = new PlaylistDao();
+        playlistDao.findByCriteria(paginatedList, criteria, sortCriteria, null);
 
         // Output the list
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (PlaylistDto playlist : paginatedList.getResultList()) {
 
-            if("PRIVATE".equals(playlist.getAccess().toString()) && playlist.getUserId() != principal.getId()) {
+            if(("PRIVATE".equals(playlist.getAccess().toString())) && (playlist.getUserId() != principal.getId())) {
                 continue;
             }
 
@@ -521,7 +523,7 @@ public class PlaylistResource extends BaseResource {
         response.add("total", paginatedList.getResultCount());
         response.add("items", items);
         
-        System.err.println(response.toString());        
+        // System.err.println(response.toString());    
 
         return renderJson(response);
     }
@@ -539,20 +541,46 @@ public class PlaylistResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
+
         // Get the playlist
-        PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
-        if (DEFAULt_playlist.equals(playlistId)) {
-            criteria.setDefaultPlaylist(true);
-        } else {
-            criteria.setDefaultPlaylist(false);
-            criteria.setId(playlistId);
+        //! Using multiple criteria to make sure that we can also access other users playlists
+
+        PlaylistCriteria criteria1 = new PlaylistCriteria()
+            .setDefaultPlaylist(true)
+            .setUserId(principal.getId());
+
+        PlaylistDto playlist1 = new PlaylistDao().findFirstByCriteria(criteria1);
+
+        if ((playlist1 != null) && (DEFAULt_playlist.equals(playlistId))) {
+            return renderJson(buildPlaylistJson(playlist1));
         }
-        PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
-        notFoundIfNull(playlist, "Playlist: " + playlistId);
+
+        PlaylistCriteria criteria2 = new PlaylistCriteria()
+            .setDefaultPlaylist(false)
+            .setUserId(principal.getId())
+            .setId(playlistId);
+
+        PlaylistDto playlist2 = new PlaylistDao().findFirstByCriteria(criteria2);
+
+        if (playlist2 != null) {
+            return renderJson(buildPlaylistJson(playlist2));
+        }
+
+        PlaylistCriteria criteria3 = new PlaylistCriteria()
+            .setDefaultPlaylist(false)
+            .setPublic(true)
+            .setId(playlistId);
+
+        PlaylistDto playlist3 = new PlaylistDao().findFirstByCriteria(criteria3);
+
+        if (playlist3 != null) {
+            return renderJson(buildPlaylistJson(playlist3));
+        }
+
+        notFoundIfNull(null, "Playlist: " + playlistId);
 
         // Output the playlist
-        return renderJson(buildPlaylistJson(playlist));
+        return renderJson(buildPlaylistJson(null));
     }
 
     /**
@@ -629,11 +657,13 @@ public class PlaylistResource extends BaseResource {
         response.add("tracks", tracks);
         response.add("id", playlist.getId());
 
-        response.add("access", playlist.getAccess().toString().toLowerCase());
+        response.add("userId", playlist.getUserId());
+        response.add("access", playlist.getAccess().toString());
 
         if (playlist.getName() != null) {
             response.add("name", playlist.getName());
         }
+
         return response;
     }
 }
