@@ -160,6 +160,7 @@ public class SpotifyService extends AbstractScheduledService {
 
             // Set access and refresh token for further "user" object usage
             user.setSpotifyAccessToken(authorizationCodeCredentials.getAccessToken());
+            user.setSpotifyRefreshToken(authorizationCodeCredentials.getRefreshToken());
             expires_in = authorizationCodeCredentials.getExpiresIn();
             System.out.println("Expires in: " + expires_in);
 
