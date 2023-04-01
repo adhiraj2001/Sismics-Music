@@ -3,8 +3,16 @@
 /**
  * Main controller.
  */
-angular.module('music').controller('Main', function($rootScope, $state, $scope, Playlist, Album) {
+angular.module('music').controller('Main', function($rootScope, $state, $scope, Playlist, Album, Restangular) {
   $scope.partyMode = Playlist.isPartyMode();
+
+  $scope.spotifySearch = function(query) {
+    console.log(query.query);
+    Restangular.one("search/spotifysearch").get(query).then(function(response) {
+      $scope.myData = response;
+      console.log(response);
+    });
+  };
 
   // Keep party mode in sync
   $rootScope.$on('playlist.party', function(e, partyMode) {

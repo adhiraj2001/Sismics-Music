@@ -53,9 +53,45 @@
         <a ng-href="#/playlist/{{ playlist.id }}" bo-text="playlist.name"></a>
       </li>
     </ul>
+    <form>
+      <input type="text" ng-model="formData.query" />
+      <button ng-click="spotifySearch(formData)">Search</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Track Name</th>
+          <th>Artist</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="track in myData.tracks">
+          <td>{{ track.name }}</td>
+          <td>{{ track.artist }}</td>
+        </tr>
+      </tbody>
+    </table>
+    
   </div>
 
   <div class="col-md-9">
     <div ui-view="content"></div>
   </div>
-</div>
+
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  tr:hover {
+    background-color: #f5f5f5;
+  }
+</style>
