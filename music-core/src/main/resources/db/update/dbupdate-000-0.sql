@@ -8,6 +8,7 @@ create cached table T_ALBUM (
    CREATEDATE           datetime             not null,
    UPDATEDATE           datetime             not null,
    DELETEDATE           datetime             null,
+   ACCESS               varchar(20)          not null default 'PUBLIC',
    constraint PK_T_ALBUM primary key (ID)
 );
 
@@ -305,9 +306,6 @@ alter table T_PLAYLIST
    add constraint fk_pll_user_id foreign key (USER_ID)
 references T_USER (ID)
 on delete restrict on update restrict;
-
--- alter table T_PLAYLIST
---    add column ACCESS varchar(10) not null default 'PRIVATE'; 
 
 alter table T_PLAYLIST_TRACK
    add constraint fk_plt_playlist_id foreign key (PLAYLIST_ID)

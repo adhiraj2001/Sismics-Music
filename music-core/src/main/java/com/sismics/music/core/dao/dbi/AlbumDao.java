@@ -27,14 +27,17 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
         List<String> criteriaList = new ArrayList<>();
         Map<String, Object> parameterMap = new HashMap<>();
 
-        StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0, a.albumart as albumArt, a.artist_id as artistId, ar.name as artistName, a.updatedate as c1, ");
+        StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0, a.albumart as albumArt, a.artist_id as artistId, ar.name as artistName, a.updatedate as c1, a.access as access,");
         if (criteria.getUserId() == null) {
             sb.append("sum(0) as c2");
         } else {
+            sb.append("utr.user_id as userId,");
             sb.append("sum(utr.playcount) as c2");
         }
+
         sb.append(" from t_album a ");
         sb.append(" join t_artist ar on(ar.id = a.artist_id) ");
+
         if (criteria.getUserId() != null) {
             sb.append(" left join t_track tr on(tr.album_id = a.id) ");
             sb.append(" left join t_user_track utr on(tr.id = utr.track_id) ");
@@ -43,6 +46,7 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
         // Adds search criteria
         criteriaList.add("ar.deletedate is null");
         criteriaList.add("a.deletedate is null");
+
         if (criteria.getId() != null) {
             criteriaList.add("a.id = :id");
             parameterMap.put("id", criteria.getId());
@@ -60,7 +64,32 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
             parameterMap.put("like", "%" + criteria.getNameLike() + "%");
         }
 
+        if (criteria.getUserId() != null) {
+            criteriaList.add("utr.user_id = :userId");
+            parameterMap.put("userId", criteria.getUserId());
+        }
+
+        if (criteria.getAccess() != null) {
+            criteriaList.add("a.access = :access");
+            parameterMap.put("access", criteria.getAccess().toString());
+        }
+
         return new QueryParam(sb.toString(), criteriaList, parameterMap, null, filterCriteria, Lists.newArrayList("a.id"), new AlbumDtoMapper());
+    }
+
+    /**
+     * Update access.
+     *
+     * @param playlist Playlist to update
+     */
+    public void updateAccess(Album album) {
+        final Handle handle = ThreadLocalContext.get().getHandle();
+        handle.createStatement("update t_album " +
+                "  set access = :access" +
+                "  where id = :id")
+                .bind("access", album.getAccess().toString())
+                .bind("id", album.getId())
+                .execute();
     }
 
     /**
@@ -95,7 +124,7 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
 
         return album.getId();
     }
-    
+
     /**
      * Updates an album.
      * 

@@ -1,5 +1,6 @@
 package com.sismics.music.core.dao.dbi.criteria;
 
+import com.sismics.music.core.constant.AccessType;
 /**
  * Album criteria.
  *
@@ -30,6 +31,11 @@ public class AlbumCriteria {
      * User ID.
      */
     private String userId;
+
+    /**
+     * Access type.
+     */
+    private AccessType access;
     
     public String getId() {
         return this.id;
@@ -73,6 +79,15 @@ public class AlbumCriteria {
 
     public AlbumCriteria setUserId(String userId) {
         this.userId = userId;
+        return this;
+    }
+
+    public AccessType getAccess() {
+        return access;
+    }
+
+    public AlbumCriteria setPublic(boolean flag) {
+        this.access = flag ? AccessType.PUBLIC : AccessType.PRIVATE;
         return this;
     }
 }

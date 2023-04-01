@@ -49,6 +49,7 @@ public class AlbumResource extends BaseResource {
      */
     private static final Logger log = LoggerFactory.getLogger(AlbumResource.class);
 
+
     /**
      * Returns an album detail.
      *
@@ -62,13 +63,30 @@ public class AlbumResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        // Get album info
-        AlbumDao albumDao = new AlbumDao();
-        List<AlbumDto> albumList = albumDao.findByCriteria(new AlbumCriteria().setUserId(principal.getId()).setId(id));
-        if (albumList.isEmpty()) {
+        AlbumDto album = null;
+        boolean isOwner = false;
+
+        AlbumCriteria criteria1 = new AlbumCriteria()
+            .setUserId(principal.getId())
+            .setId(id);
+
+        album = new AlbumDao().findFirstByCriteria(criteria1);
+
+        if (album != null) {
+            isOwner = true;
+        }
+        else {
+            AlbumCriteria criteria2 = new AlbumCriteria()
+                .setPublic(true)
+                .setId(id);
+
+            album = new AlbumDao().findFirstByCriteria(criteria2);
+        }
+
+        if (album == null) {
+            // notFoundIfNull(null, "Album: " + id);
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        AlbumDto album = albumList.iterator().next();
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", album.getId())
@@ -78,7 +96,9 @@ public class AlbumResource extends BaseResource {
         
         response.add("artist", Json.createObjectBuilder()
                 .add("id", album.getArtistId())
-                .add("name", album.getArtistName()));
+                .add("name", album.getArtistName()))
+                .add("access", album.getAccess().toString())
+                .add("isOwner", isOwner);
 
         // Get track info
         JsonArrayBuilder tracks = Json.createArrayBuilder();
@@ -109,6 +129,7 @@ public class AlbumResource extends BaseResource {
 
         return renderJson(response);
     }
+
 
     /**
      * Returns an album cover.
@@ -258,6 +279,52 @@ public class AlbumResource extends BaseResource {
         return renderJson(response);
     }
 
+
+    /**
+     * Update a album access.
+     *
+     * @param access The access
+     * @return Response
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}/access")
+    public Response editAccess(
+            @PathParam("id") String albumId,
+            @FormParam("access") String access) {
+
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        access = access.toUpperCase();
+
+        // Get the playlist
+        AlbumCriteria albumCriteria = new AlbumCriteria()
+                .setUserId(principal.getId())
+                .setId(albumId);
+       
+
+        AlbumDto albumDto = new AlbumDao().findFirstByCriteria(albumCriteria);
+        notFoundIfNull(albumDto, "Album: " + albumId);
+        
+        // Update the playlist
+        Album album = new Album(albumDto.getId());
+
+        if (albumDto.getAccess().toString().equals(access)) {
+            return okJson();
+        }
+
+        album.setAccess(access);
+
+        // Static method access in static way
+        // Using Playlist class directly and not object instance
+        Album.updatePlaylistAccess(album);
+
+        // Always return OK
+        return okJson();
+    }
+
+
     /**
      * Returns active albums.
      *
@@ -274,33 +341,57 @@ public class AlbumResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        AlbumDao albumDao = new AlbumDao();
-        PaginatedList<AlbumDto> paginatedList = PaginatedLists.create(limit, offset);
-        SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
-        AlbumCriteria albumCriteria = new AlbumCriteria()
-                .setUserId(principal.getId())
-                .setNameLike(search);
-        albumDao.findByCriteria(paginatedList, albumCriteria, sortCriteria, null);
-
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder items = Json.createArrayBuilder();
-        for (AlbumDto album : paginatedList.getResultList()) {
+
+        AlbumDao albumDao1 = new AlbumDao();
+        PaginatedList<AlbumDto> paginatedList1 = PaginatedLists.create(limit, offset);
+        SortCriteria sortCriteria1 = new SortCriteria(sortColumn, asc);
+        AlbumCriteria albumCriteria1 = new AlbumCriteria()
+                .setUserId(principal.getId())
+                .setPublic(false)
+                .setNameLike(search);
+        albumDao1.findByCriteria(paginatedList1, albumCriteria1, sortCriteria1, null);
+
+        for (AlbumDto album1 : paginatedList1.getResultList()) {
             items.add(Json.createObjectBuilder()
-                    .add("id", album.getId())
-                    .add("name", album.getName())
-                    .add("update_date", album.getUpdateDate().getTime())
-                    .add("albumart", album.getAlbumArt() != null)
-                    .add("play_count", album.getUserPlayCount())
+                    .add("id", album1.getId())
+                    .add("name", album1.getName())
+                    .add("update_date", album1.getUpdateDate().getTime())
+                    .add("albumart", album1.getAlbumArt() != null)
+                    .add("play_count", album1.getUserPlayCount())
                     .add("artist", Json.createObjectBuilder()
-                            .add("id", album.getArtistId())
-                            .add("name", album.getArtistName())));
+                            .add("id", album1.getArtistId())
+                            .add("name", album1.getArtistName())));
+        }
+
+        AlbumDao albumDao2 = new AlbumDao();
+        PaginatedList<AlbumDto> paginatedList2 = PaginatedLists.create(limit, offset);
+        SortCriteria sortCriteria2 = new SortCriteria(sortColumn, asc);
+        AlbumCriteria albumCriteria2 = new AlbumCriteria()
+                // .setUserId(principal.getId())
+                .setPublic(true)
+                .setNameLike(search);
+        albumDao2.findByCriteria(paginatedList2, albumCriteria2, sortCriteria2, null);
+
+        for (AlbumDto album2 : paginatedList2.getResultList()) {
+            items.add(Json.createObjectBuilder()
+                    .add("id", album2.getId())
+                    .add("name", album2.getName())
+                    .add("update_date", album2.getUpdateDate().getTime())
+                    .add("albumart", album2.getAlbumArt() != null)
+                    .add("play_count", album2.getUserPlayCount())
+                    .add("artist", Json.createObjectBuilder()
+                            .add("id", album2.getArtistId())
+                            .add("name", album2.getArtistName())));
         }
         
-        response.add("total", paginatedList.getResultCount());
+        response.add("total", paginatedList2.getResultCount());
         response.add("albums", items);
 
         return renderJson(response);
     }
+    
 
     // FIXME Handle HTTP Client https://github.com/sismics/music/issues/78
     public static File downloadAlbumArt(String url) {

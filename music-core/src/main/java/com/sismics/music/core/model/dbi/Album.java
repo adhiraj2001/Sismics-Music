@@ -7,6 +7,9 @@ import org.skife.jdbi.v2.Handle;
 
 import java.util.Date;
 
+import com.sismics.music.core.constant.AccessType;
+import com.sismics.music.core.dao.dbi.AlbumDao;
+
 /**
  * Album entity.
  * 
@@ -58,11 +61,19 @@ public class Album {
      */
     private String location;
 
+    /**
+     * Playlist access.
+     */
+    private AccessType access;
+
     public Album() {
+        access = AccessType.PRIVATE;
     }
 
     public Album(String id) {
         this.id = id;
+
+        access = AccessType.PRIVATE;
     }
 
     public Album(String id, String directoryId, String artistId, String name, String albumArt, Date createDate, Date updateDate, Date deleteDate, String location) {
@@ -75,6 +86,8 @@ public class Album {
         this.updateDate = updateDate;
         this.deleteDate = deleteDate;
         this.location = location;
+
+        access = AccessType.PRIVATE;
     }
 
     /**
@@ -255,11 +268,38 @@ public class Album {
         this.location = location;
     }
 
+    public AccessType getAccess() {
+        return access;
+    }
+
+    public void setAccess(String access) {
+        switch(access) {
+            case "PUBLIC":
+                this.access = AccessType.PUBLIC;
+                break;
+            case "PRIVATE":
+                this.access = AccessType.PRIVATE;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid access: " + access);
+        }
+    }
+
+    /**
+     * Update a album access.
+     *
+     * @param album
+     */
+    public static void updatePlaylistAccess(Album album) {
+        new AlbumDao().updateAccess(album);
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
+                // .add("access", access.toString())
                 .toString();
     }
 }

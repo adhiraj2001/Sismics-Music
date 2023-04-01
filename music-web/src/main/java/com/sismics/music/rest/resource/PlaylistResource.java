@@ -137,7 +137,7 @@ public class PlaylistResource extends BaseResource {
         // Update the playlist
         Playlist playlist = new Playlist(playlistDto.getId());
 
-        if (playlistDto.getAccess().equals(access)) {
+        if (playlistDto.getAccess().toString().equals(access)) {
             return okJson();
         }
 

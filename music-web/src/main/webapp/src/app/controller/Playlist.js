@@ -14,7 +14,7 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
     console.log("Playlist isPublic: " + $scope.isPublic);
 
     // var ownerType = $scope.playlist.isOwner;
-    $scope.isOwner = $scope.playlist.isOwner;
+    $scope.isOwner = data.isOwner;
     console.log("Playlist isOwner: " + $scope.isOwner);
   });
 
