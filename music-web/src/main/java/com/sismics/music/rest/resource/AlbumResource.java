@@ -64,23 +64,26 @@ public class AlbumResource extends BaseResource {
         }
 
         AlbumDto album = null;
-        boolean isOwner = false;
 
         AlbumCriteria criteria1 = new AlbumCriteria()
             .setUserId(principal.getId())
+            .setPublic(false)
             .setId(id);
 
-        album = new AlbumDao().findFirstByCriteria(criteria1);
+        AlbumDto album1 = new AlbumDao().findFirstByCriteria(criteria1);
 
-        if (album != null) {
-            isOwner = true;
+        if (album1 != null) {
+            album = album1;
         }
-        else {
-            AlbumCriteria criteria2 = new AlbumCriteria()
-                .setPublic(true)
-                .setId(id);
 
-            album = new AlbumDao().findFirstByCriteria(criteria2);
+        AlbumCriteria criteria2 = new AlbumCriteria()
+            .setPublic(true)
+            .setId(id);
+
+        AlbumDto album2 = new AlbumDao().findFirstByCriteria(criteria2);
+
+        if (album2 != null) {
+            album = album2;
         }
 
         if (album == null) {
@@ -90,6 +93,7 @@ public class AlbumResource extends BaseResource {
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", album.getId())
+                .add("userId", album.getUserId())
                 .add("name", album.getName())
                 .add("albumart", album.getAlbumArt() != null)
                 .add("play_count", album.getUserPlayCount());
@@ -98,7 +102,7 @@ public class AlbumResource extends BaseResource {
                 .add("id", album.getArtistId())
                 .add("name", album.getArtistName()))
                 .add("access", album.getAccess().toString())
-                .add("isOwner", isOwner);
+                .add("isOwner", (album.getUserId() != null && album.getUserId().equals(principal.getId())));
 
         // Get track info
         JsonArrayBuilder tracks = Json.createArrayBuilder();
@@ -289,7 +293,7 @@ public class AlbumResource extends BaseResource {
     @POST
     @Path("{id: [a-z0-9\\-]+}/access")
     public Response editAccess(
-            @PathParam("id") String albumId,
+            @PathParam("id") String id,
             @FormParam("access") String access) {
 
         if (!authenticate()) {
@@ -298,27 +302,19 @@ public class AlbumResource extends BaseResource {
 
         access = access.toUpperCase();
 
-        // Get the playlist
-        AlbumCriteria albumCriteria = new AlbumCriteria()
-                .setUserId(principal.getId())
-                .setId(albumId);
-       
+        // Get the album
+        Album album = Album.getActiveById(id);
+        notFoundIfNull(album, "id");
 
-        AlbumDto albumDto = new AlbumDao().findFirstByCriteria(albumCriteria);
-        notFoundIfNull(albumDto, "Album: " + albumId);
-        
-        // Update the playlist
-        Album album = new Album(albumDto.getId());
-
-        if (albumDto.getAccess().toString().equals(access)) {
+        if (album.getAccess().toString().equals(access)) {
             return okJson();
         }
 
         album.setAccess(access);
 
         // Static method access in static way
-        // Using Playlist class directly and not object instance
-        Album.updatePlaylistAccess(album);
+        // Using AlbumDao class directly and not object instance
+        AlbumDao.updateAccess(album);
 
         // Always return OK
         return okJson();
@@ -351,11 +347,13 @@ public class AlbumResource extends BaseResource {
                 .setUserId(principal.getId())
                 .setPublic(false)
                 .setNameLike(search);
+
         albumDao1.findByCriteria(paginatedList1, albumCriteria1, sortCriteria1, null);
 
         for (AlbumDto album1 : paginatedList1.getResultList()) {
             items.add(Json.createObjectBuilder()
                     .add("id", album1.getId())
+                    .add("user_id", album1.getUserId())
                     .add("name", album1.getName())
                     .add("update_date", album1.getUpdateDate().getTime())
                     .add("albumart", album1.getAlbumArt() != null)
@@ -369,7 +367,6 @@ public class AlbumResource extends BaseResource {
         PaginatedList<AlbumDto> paginatedList2 = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria2 = new SortCriteria(sortColumn, asc);
         AlbumCriteria albumCriteria2 = new AlbumCriteria()
-                // .setUserId(principal.getId())
                 .setPublic(true)
                 .setNameLike(search);
         albumDao2.findByCriteria(paginatedList2, albumCriteria2, sortCriteria2, null);
@@ -377,6 +374,7 @@ public class AlbumResource extends BaseResource {
         for (AlbumDto album2 : paginatedList2.getResultList()) {
             items.add(Json.createObjectBuilder()
                     .add("id", album2.getId())
+                    .add("user_id", album2.getUserId())
                     .add("name", album2.getName())
                     .add("update_date", album2.getUpdateDate().getTime())
                     .add("albumart", album2.getAlbumArt() != null)
@@ -386,7 +384,7 @@ public class AlbumResource extends BaseResource {
                             .add("name", album2.getArtistName())));
         }
         
-        response.add("total", paginatedList2.getResultCount());
+        response.add("total",paginatedList1.getResultCount() + paginatedList2.getResultCount());
         response.add("albums", items);
 
         return renderJson(response);

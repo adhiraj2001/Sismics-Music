@@ -24,7 +24,7 @@ public class AlbumDtoMapper implements ResultSetMapper<AlbumDto> {
         dto.setUpdateDate(r.getTimestamp("c1"));
         dto.setUserPlayCount(r.getLong("c2"));
 
-        // dto.setUserId(r.getString("userId")); //! Gives SQL error, in cases where user_id is null (directories)
+        dto.setUserId(r.getString("userId"));
         dto.setAccess(r.getString("access"));
 
         return dto;

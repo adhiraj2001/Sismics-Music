@@ -27,11 +27,11 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
         List<String> criteriaList = new ArrayList<>();
         Map<String, Object> parameterMap = new HashMap<>();
 
-        StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0, a.albumart as albumArt, a.artist_id as artistId, ar.name as artistName, a.updatedate as c1, a.access as access,");
+        StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0, a.albumart as albumArt, a.artist_id as artistId, ar.name as artistName, a.updatedate as c1, a.user_id as userId, a.access as access,");
+
         if (criteria.getUserId() == null) {
             sb.append("sum(0) as c2");
         } else {
-            sb.append("utr.user_id as userId,");
             sb.append("sum(utr.playcount) as c2");
         }
 
@@ -65,7 +65,7 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
         }
 
         if (criteria.getUserId() != null) {
-            criteriaList.add("utr.user_id = :userId");
+            criteriaList.add("a.user_id = :userId");
             parameterMap.put("userId", criteria.getUserId());
         }
 
@@ -82,7 +82,7 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
      *
      * @param playlist Playlist to update
      */
-    public void updateAccess(Album album) {
+    public static void updateAccess(Album album) {
         final Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("update t_album " +
                 "  set access = :access" +
@@ -99,7 +99,9 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
      * @return Album ID
      */
     public String create(Album album) {
+
         album.setId(UUID.randomUUID().toString());
+
         final Date now = new Date();
         if (album.getCreateDate() == null) {
             album.setCreateDate(now);
@@ -110,9 +112,12 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
 
         Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("insert into " +
-                " t_album(id, directory_id, artist_id, name, albumart, createdate, updatedate, location)" +
-                " values(:id, :directoryId, :artistId, :name, :albumArt, :createDate, :updateDate, :location)")
+                " t_album(id, user_id ,directory_id, artist_id, name, albumart, createdate, updatedate, location)" +
+                " values(:id, :user_id, :directoryId, :artistId, :name, :albumArt, :createDate, :updateDate, :location)")
                 .bind("id", album.getId())
+
+                .bind("user_id", album.getUserId())
+
                 .bind("directoryId", album.getDirectoryId())
                 .bind("artistId", album.getArtistId())
                 .bind("name", album.getName())

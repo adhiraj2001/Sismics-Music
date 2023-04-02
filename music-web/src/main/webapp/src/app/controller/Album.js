@@ -16,6 +16,10 @@ angular.module('music').controller('Album', function($scope, $state, $stateParam
     // var ownerType = $scope.album.isOwner;
     $scope.isOwner = data.isOwner;
     console.log("Album isOwner: " + $scope.isOwner);
+
+    // var accessType = $scope.album.access;
+    $scope.userId = data.userId;
+    console.log("Album userId: " + $scope.userId);
   });
 
 

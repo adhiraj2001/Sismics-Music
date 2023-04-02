@@ -1,5 +1,8 @@
 create cached table T_ALBUM (
    ID                   varchar(36)          not null,
+
+   USER_ID              varchar(36)          not null,
+
    DIRECTORY_ID         varchar(36)          not null,
    ARTIST_ID            varchar(36)          not null,
    NAME                 varchar(1000)        not null,
@@ -8,7 +11,9 @@ create cached table T_ALBUM (
    CREATEDATE           datetime             not null,
    UPDATEDATE           datetime             not null,
    DELETEDATE           datetime             null,
-   ACCESS               varchar(20)          not null default 'PUBLIC',
+
+   ACCESS               varchar(20)          not null default 'PRIVATE',
+
    constraint PK_T_ALBUM primary key (ID)
 );
 
@@ -99,7 +104,9 @@ create cached table T_PLAYLIST (
    ID                   varchar(36)          not null,
    USER_ID              varchar(36)          not null,
    NAME                 varchar(200)         null,
+
    ACCESS               varchar(20)          not null default 'PRIVATE',
+
    constraint PK_T_PLAYLIST primary key (ID)
 );
 

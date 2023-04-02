@@ -64,6 +64,11 @@ public class Album {
     /**
      * Playlist access.
      */
+    private String userId;
+
+    /**
+     * Playlist access.
+     */
     private AccessType access;
 
     public Album() {
@@ -76,8 +81,10 @@ public class Album {
         access = AccessType.PRIVATE;
     }
 
-    public Album(String id, String directoryId, String artistId, String name, String albumArt, Date createDate, Date updateDate, Date deleteDate, String location) {
+    public Album(String id, String userId, String directoryId, String artistId, String name, String albumArt, Date createDate, Date updateDate, Date deleteDate, String location) {
         this.id = id;
+        this.userId = userId;
+
         this.directoryId = directoryId;
         this.artistId = artistId;
         this.name = name;
@@ -268,6 +275,26 @@ public class Album {
         this.location = location;
     }
 
+
+    /**
+     * Getter of userId.
+     *
+     * @return id
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    /**
+     * Setter of id.
+     *
+     * @param id id
+     */
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+
     public AccessType getAccess() {
         return access;
     }
@@ -285,20 +312,12 @@ public class Album {
         }
     }
 
-    /**
-     * Update a album access.
-     *
-     * @param album
-     */
-    public static void updatePlaylistAccess(Album album) {
-        new AlbumDao().updateAccess(album);
-    }
-
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
+                // .add("userId", userId)
                 // .add("access", access.toString())
                 .toString();
     }

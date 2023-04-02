@@ -286,6 +286,9 @@ public class UserResource extends BaseResource {
         if (userId == null) {
             throw new ForbiddenClientException();
         }
+
+        // Add the userId to AppContext
+        AppContext.getInstance().setUserId(userId);
             
         // Create a new session token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
@@ -337,6 +340,9 @@ public class UserResource extends BaseResource {
         if (authenticationToken == null) {
             throw new ForbiddenClientException();
         }
+
+        // Remove userId from AppContext
+        AppContext.getInstance().setUserId(null);
         
         // Deletes the server token
         try {
