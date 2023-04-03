@@ -18,6 +18,8 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.Validation;
+import com.wrapper.spotify.model_objects.specification.Recommendations;
+import com.wrapper.spotify.model_objects.specification.TrackSimplified;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -56,6 +58,7 @@ import javax.ws.rs.core.Response;
 
 import java.util.Collection;
 import java.util.List;
+import com.sismics.music.core.service.spotify.SpotifyService;
 import com.sismics.music.core.service.lastfm.LastFmService;
 import de.umass.lastfm.*;
 
@@ -753,7 +756,6 @@ public class PlaylistResource extends BaseResource {
         if (playlist.getName() != null) {
             response.add("name", playlist.getName());
         }
-
         return response;
     }
 
@@ -777,6 +779,7 @@ public class PlaylistResource extends BaseResource {
         // Output the playlist
         return buildPlaylistJson(playlist).build();
     }
+
     @GET
     @Path("{id: [a-z0-9\\-]+}/lastfmrecommendation")
     public JsonObject recommendationLastfm(@PathParam("id") String playlistId) {
@@ -796,6 +799,33 @@ public class PlaylistResource extends BaseResource {
                         .add("name", t.getName())
                         .add("artist", t.getArtist()));
             }
+        }
+        JsonObject response = Json.createObjectBuilder()
+                .add("status", "ok")
+                .add("tracks", rectrackArray)
+                .build();
+        System.out.println("response: " + response);
+        return response;
+    }
+
+    @GET
+    @Path("{id: [a-z0-9\\-]+}/spotifyrecommendation")
+    public JsonObject recommendationSpotify(@PathParam("id") String playlistId) {
+        //implement strategy pattern ig
+        JsonObject playlist = getPlaylistTracks(playlistId);
+        final SpotifyService spotifyService = AppContext.getInstance().getSpotifyService();
+        // iterate over all the tracks in the playlist,ie, playlist.tracks using a for loop
+        // for each track, get the artist and album
+        JsonArray tracks = playlist.getJsonArray("tracks");
+        JsonArrayBuilder rectrackArray = Json.createArrayBuilder();
+
+        for (int i=0;i<tracks.size();i++) {
+            JsonObject track = tracks.getJsonObject(i);
+            String artist = track.getJsonObject("artist").getString("name");
+            String trackname = track.getString("title"); 
+            TrackSimplified[] recom= spotifyService.getRecommendations_Sync(trackname, artist);
+            
+            System.out.println("recom: " + recom);
         }
         JsonObject response = Json.createObjectBuilder()
                 .add("status", "ok")

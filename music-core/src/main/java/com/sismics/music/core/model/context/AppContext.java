@@ -10,6 +10,7 @@ import com.sismics.music.core.service.collection.CollectionWatchService;
 import com.sismics.music.core.service.importaudio.ImportAudioService;
 import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.music.core.service.player.PlayerService;
+import com.sismics.music.core.service.spotify.SpotifyService;
 import com.sismics.music.core.service.transcoder.TranscoderService;
 import com.sismics.util.EnvironmentUtil;
 
@@ -52,6 +53,11 @@ public class AppContext {
     private EventBus lastFmEventBus;
 
     /**
+     * Do all Spotify operations in this thread, because of rate limitation.
+     */
+    private EventBus spotifyEventBus;
+
+    /**
      * Collection service.
      */
     private CollectionService collectionService;
@@ -75,6 +81,11 @@ public class AppContext {
      * Last.fm service.
      */
     private LastFmService lastFmService;
+
+    /**
+     * Spotify service.
+     */
+    private SpotifyService spotifyService;
 
     /**
      * Player service.
@@ -113,6 +124,7 @@ public class AppContext {
 
         albumArtService = new AlbumArtService();
         lastFmService = new LastFmService();
+        spotifyService = new SpotifyService();
         playerService = new PlayerService();
         transcoderService = new TranscoderService();
     }
@@ -217,6 +229,15 @@ public class AppContext {
     }
 
     /**
+     * Getter of spotifyService.
+     *
+     * @return spotifyService
+     */
+    public SpotifyService getSpotifyService() {
+        return spotifyService;
+    }
+
+    /**
      * Getter of transcoderService.
      *
      * @return transcoderService
@@ -259,6 +280,15 @@ public class AppContext {
      */
     public EventBus getLastFmEventBus() {
         return lastFmEventBus;
+    }
+
+        /**
+     * Getter of spotifyEventBus.
+     *
+     * @return spotifyEventBus
+     */
+    public EventBus getSpotifyEventBus() {
+        return spotifyEventBus;
     }
 
     /**

@@ -3,18 +3,25 @@ package com.sismics.music.rest.resource;
 import com.sismics.music.core.dao.dbi.AlbumDao;
 import com.sismics.music.core.dao.dbi.ArtistDao;
 import com.sismics.music.core.dao.dbi.TrackDao;
+import com.sismics.music.core.dao.dbi.UserDao;
 import com.sismics.music.core.dao.dbi.criteria.AlbumCriteria;
 import com.sismics.music.core.dao.dbi.criteria.ArtistCriteria;
 import com.sismics.music.core.dao.dbi.criteria.TrackCriteria;
 import com.sismics.music.core.dao.dbi.dto.AlbumDto;
 import com.sismics.music.core.dao.dbi.dto.ArtistDto;
 import com.sismics.music.core.dao.dbi.dto.TrackDto;
+import com.sismics.music.core.model.context.AppContext;
+import com.sismics.music.core.model.dbi.User;
+import com.sismics.music.core.service.spotify.SpotifyService;
 import com.sismics.music.core.util.dbi.PaginatedList;
 import com.sismics.music.core.util.dbi.PaginatedLists;
 import com.sismics.music.rest.util.JsonUtil;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.music.core.model.dbi.Track;
 import com.sismics.rest.util.Validation;
-
+import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
+import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
+import com.wrapper.spotify.model_objects.specification.Paging;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -112,6 +119,68 @@ public class SearchResource extends BaseResource {
         }
         response.add("artists", artists);
         
+        return renderJson(response);
+    }
+        /**
+     * Run a full text search.
+     *
+     * @param query Search query
+     * @param limit Page limit
+     * @param offset Page offset
+     * @return Response
+     */
+    @GET
+    // @Path("{spotify/query: .+}")
+    @Path("/spotifysearch")
+    public Response spotifySearch(@QueryParam("query") String query) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        final SpotifyService spotifyService = AppContext.getInstance().getSpotifyService();
+        User user = new UserDao().getActiveById(principal.getId());
+        Paging<com.wrapper.spotify.model_objects.specification.Track> t = spotifyService.searchTracks_Sync(user, query);
+        Paging<AlbumSimplified> a = spotifyService.searchAlbums_Sync(user, query);
+        
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        // tracks
+        JsonArrayBuilder tracks = Json.createArrayBuilder();
+        for (com.wrapper.spotify.model_objects.specification.Track track : t.getItems()) {
+            tracks.add(Json.createObjectBuilder()
+                    .add("id", track.getId())
+                    .add("title", track.getName())
+                    .add("length", track.getDurationMs())
+                    .add("album", Json.createObjectBuilder()
+                            .add("id", track.getAlbum().getId())
+                            .add("name", track.getAlbum().getName())
+                            .add("albumart", track.getAlbum().getImages()[0].getUrl()))
+                    .add("artist", Json.createObjectBuilder()
+                            .add("id", track.getArtists()[0].getId())
+                            .add("name", track.getArtists()[0].getName())));
+        }
+        response.add("tracks", tracks);
+
+        // albums
+        JsonArrayBuilder albums = Json.createArrayBuilder();
+        for (AlbumSimplified album : a.getItems()) {
+            albums.add(Json.createObjectBuilder()
+                    .add("id", album.getId())
+                    .add("name", album.getName())
+                    .add("albumart", album.getImages()[0].getUrl())
+                    .add("artist", Json.createObjectBuilder()
+                            .add("id", album.getArtists()[0].getId())
+                            .add("name", album.getArtists()[0].getName())));
+        }
+
+        response.add("albums", albums);
+
+        // artists
+        JsonArrayBuilder artists = Json.createArrayBuilder();
+        for (ArtistSimplified artist : a.getItems()[0].getArtists()) {
+            artists.add(Json.createObjectBuilder()
+                    .add("id", artist.getId())
+                    .add("name", artist.getName()));
+        }
+        response.add("artists", artists);
         return renderJson(response);
     }
 }

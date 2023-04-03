@@ -25,6 +25,10 @@ public class UserMapper extends BaseResultSetMapper<User> {
             "lastfmsessiontoken",
             "lastfmactive",
             "firstconnection",
+            "spotifyaccesstoken",
+            "spotifyrefreshtoken",
+            "spotifyrefreshtime",
+            "spotifyauthcode",
             "createdate",
             "deletedate"};
     }
@@ -44,6 +48,10 @@ public class UserMapper extends BaseResultSetMapper<User> {
                 r.getString(columns[column++]),
                 r.getBoolean(columns[column++]),
                 r.getBoolean(columns[column++]),
+                r.getString(columns[column++]),
+                r.getString(columns[column++]),
+                r.getTimestamp(columns[column++]),
+                r.getString(columns[column++]),
                 r.getTimestamp(columns[column++]),
                 r.getTimestamp(columns[column++]));
     }

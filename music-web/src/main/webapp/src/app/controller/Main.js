@@ -6,12 +6,23 @@
 angular.module('music').controller('Main', function($rootScope, $state, $scope, Playlist, Album, Restangular) {
   $scope.partyMode = Playlist.isPartyMode();
 
+  $scope.spotifySearch = function(query) {
+    Restangular.one("search/spotifysearch").get(query).then(function(response) {
+      $scope.myData = response;
+    });
+  };
   $scope.lastFmSearch = function(query) {
     Restangular.one("externalsearch/lastfmsearch").get(query).then(function(response) {
       $scope.myData = response;
     });
   };
 
+  $scope.spotifyRecommend = function(playlistId) {
+    Restangular.one("playlist/" + playlistId + "/spotifyrecommendation").get().then(function(response) {
+      $scope.myData = response;
+      console.log(response);
+    });
+  };
   $scope.lastFmRecommendations = function(playlistId) {
     console.log(playlistId);
     Restangular.one("playlist/" + playlistId + "/lastfmrecommendation").get().then(function(response) {

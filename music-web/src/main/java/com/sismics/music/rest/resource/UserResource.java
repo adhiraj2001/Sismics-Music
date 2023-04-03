@@ -14,6 +14,7 @@ import com.sismics.music.core.model.dbi.AuthenticationToken;
 import com.sismics.music.core.model.dbi.Playlist;
 import com.sismics.music.core.model.dbi.User;
 import com.sismics.music.core.service.lastfm.LastFmService;
+import com.sismics.music.core.service.spotify.SpotifyService;
 import com.sismics.music.core.util.dbi.PaginatedList;
 import com.sismics.music.core.util.dbi.PaginatedLists;
 import com.sismics.music.core.util.dbi.SortCriteria;
@@ -447,6 +448,7 @@ public class UserResource extends BaseResource {
                     .add("email", user.getEmail())
                     .add("locale", user.getLocaleId())
                     .add("lastfm_connected", user.getLastFmSessionToken() != null)
+                    .add("spotify_connected", user.getSpotifyAccessToken() != null)
                     .add("first_connection", user.isFirstConnection());
             JsonArrayBuilder privileges = Json.createArrayBuilder();
             for (String privilege : ((UserPrincipal) principal).getPrivilegeSet()) {
@@ -622,6 +624,98 @@ public class UserResource extends BaseResource {
         User user = userDao.getActiveById(principal.getId());
         user.setLastFmSessionToken(null);
         userDao.updateLastFmSessionToken(user);
+
+        // Always return ok
+        JsonObject response = Json.createObjectBuilder()
+                .add("status", "ok")
+                .build();
+        return Response.ok().entity(response).build();
+    }
+
+// -------------- SPOTIFY --------------
+/**
+     * Authenticates a user on Spotify.
+     *
+     * @param spotifyUsername Spotify username
+     * @param spotifyPassword Spotify password
+     * @return Response
+     */
+    @PUT
+    @Path("spotify")
+    public Response registerSpotify(){
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the value of the session token
+        final SpotifyService spotifyService = AppContext.getInstance().getSpotifyService();
+
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveById(principal.getId());
+
+        spotifyService.authorizationCodeUri_Sync(user);
+        spotifyService.authorizationCode_Sync(user);
+
+        // Update tokens
+        userDao.updateSpotifyTokens(user);
+
+        // Always return ok
+        JsonObject response = Json.createObjectBuilder()
+                .add("status", "ok")
+                .build();
+        return Response.ok().entity(response).build();
+    }
+
+//     /**
+//      * Returns the Last.fm information about the connected user.
+//      *
+//      * @return Response
+//      */
+//     @GET
+//     @Path("lastfm")
+//     public Response lastFmInfo() {
+//         if (!authenticate()) {
+//             throw new ForbiddenClientException();
+//         }
+
+//         JsonObjectBuilder response = Json.createObjectBuilder();
+//         User user = new UserDao().getActiveById(principal.getId());
+
+//         if (user.getLastFmSessionToken() != null) {
+//             final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
+//             de.umass.lastfm.User lastFmUser = lastFmService.getInfo(user);
+    
+//             response.add("username", lastFmUser.getName())
+//                     .add("registered_date", lastFmUser.getRegisteredDate().getTime())
+//                     .add("play_count", lastFmUser.getPlaycount())
+//                     .add("url", lastFmUser.getUrl())
+//                     .add("image_url", lastFmUser.getImageURL());
+//         } else {
+//             response.add("status", "not_connected");
+//         }
+
+//         return renderJson(response);
+//     }
+    
+    /**
+     * Disconnect the current user from Spotify.
+     *  
+     * @return Response
+     */
+    @DELETE
+    @Path("spotify")
+    public Response unregisterSpotify() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Remove the session token
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveById(principal.getId());
+        user.setSpotifyAccessToken(null);
+        user.setSpotifyRefreshToken(null);
+        user.setSpotifyAuthCode(null);
+        userDao.updateSpotifyTokens(user);
 
         // Always return ok
         JsonObject response = Json.createObjectBuilder()

@@ -19,4 +19,18 @@ public class UserCriteria {
         this.lastFmSessionTokenNotNull = lastFmSessionTokenNotNull;
         return this;
     }
+
+    /**
+     * User is registered on Spotify.
+     */
+    private boolean spotifySessionTokenNotNull;
+
+    public boolean isSpotifySessionTokenNotNull() {
+        return this.spotifySessionTokenNotNull;
+    }
+
+    public UserCriteria setSpotifySessionTokenNotNull(boolean spotifySessionTokenNotNull) {
+        this.spotifySessionTokenNotNull = spotifySessionTokenNotNull;
+        return this;
+    }
 }

@@ -15,4 +15,18 @@ public enum ConfigType {
      * Last.fm API secret.
      */
     LAST_FM_API_SECRET ,
+    /**
+     * Spotify API key.
+     */
+    SPOTIFY_API_KEY,
+
+    /**
+     * Spotify API secret.
+     */
+    SPOTIFY_API_SECRET, 
+    
+    /**
+     * Spotify API redirect URI.
+     */
+    SPOTIFY_API_REDIRECT_URI ,
 }

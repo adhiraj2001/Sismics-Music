@@ -33,6 +33,9 @@ public class UserDao extends BaseDao<UserDto, UserCriteria> {
         if (criteria.isLastFmSessionTokenNotNull()) {
             criteriaList.add("lastfmsessiontoken is not null");
         }
+        if (criteria.isSpotifySessionTokenNotNull()) {
+            criteriaList.add("spotifysessiontoken is not null");
+        }
         criteriaList.add("u.deletedate is null");
 
         return new QueryParam(sb.toString(), criteriaList, parameterMap, null, filterCriteria, new UserDtoMapper());
@@ -147,6 +150,30 @@ public class UserDao extends BaseDao<UserDto, UserCriteria> {
                 " where u.id = :id and u.deletedate is null")
                 .bind("id", user.getId())
                 .bind("lastFmSessionToken", user.getLastFmSessionToken())
+                .execute();
+
+        return user;
+    }
+    
+    /**
+     * Update the user Spotify session tokens.
+     *
+     * @param user User to update
+     * @return Updated user
+     */
+    public User updateSpotifyTokens(User user) {
+        final Handle handle = ThreadLocalContext.get().getHandle();
+        handle.createStatement("update t_user u set " +
+                " u.spotifyaccesstoken = :spotifyAccessToken, " +
+                " u.spotifyrefreshtoken = :spotifyRefreshToken " +
+                " u.spotifyrefreshtime = :spotifyRefreshTime " +
+                " u.spotifyauthcode = :spotifyAuthCode " +
+                " where u.id = :id and u.deletedate is null")
+                .bind("id", user.getId())
+                .bind("spotifyAccessToken", user.getSpotifyAccessToken())
+                .bind("spotifyRefreshToken", user.getSpotifyRefreshToken())
+                .bind("spotifyRefreshTime", user.getSpotifyRefreshTime())
+                .bind("spotifyAuthCode", user.getSpotifyAuthCode())
                 .execute();
 
         return user;

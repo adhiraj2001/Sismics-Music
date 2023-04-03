@@ -51,14 +51,17 @@
       <li ng-if="playlists.length == 0" class="text-center text-muted">No playlist</li>
       <li bindonce ng-repeat="playlist in playlists | filter: { name: playlistSearch }">
         <a ng-href="#/playlist/{{ playlist.id }}" bo-text="playlist.name"></a>
+        <button ng-click="spotifyRecommend(playlist.id)">
+          Recommend Spotify Tracks
         <button id="recommend" ng-click="lastFmRecommendations(playlist.id)">
-          Recommend More Like This
+          Recommend Last.fm Tracks
         </button>
       </li>
     </ul>
     <form>
       <input type="text" ng-model="formData.query" />
-      <button ng-click="lastFmSearch(formData)">Search</button>
+      <button ng-click="spotifySearch(formData)">Search on Spotify</button>
+      <button ng-click="lastFmSearch(formData)">Search on Last.fm</button>
     </form>
     <table>
       <thead>
@@ -69,11 +72,20 @@
       </thead>
       <tbody>
         <tr ng-repeat="track in myData.tracks">
+<<<<<<< HEAD
+          <td>{{ track.title }}</td>
+          <td>{{ track.artist.name }}</td>
+        </tr>
+      </tbody>
+    </table>
+    
+=======
           <td>{{ track.name }}</td>
           <td>{{ track.artist }}</td>
         </tr>
       </tbody>
     </table>
+>>>>>>> master
   </div>
 
   <div class="col-md-9">

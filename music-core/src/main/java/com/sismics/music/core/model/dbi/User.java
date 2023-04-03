@@ -1,5 +1,6 @@
 package com.sismics.music.core.model.dbi;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import com.google.common.base.Objects;
@@ -61,6 +62,26 @@ public class User {
     private boolean firstConnection;
 
     /**
+     * Access token on Spotify.
+     */
+    private String spotifyAccessToken;
+
+    /**
+     * Refresh token on Spotify.
+     */
+    private String spotifyRefreshToken;
+
+    /**
+     * timestamp of the last time the user's Spotify token was refreshed.
+     */
+    private Timestamp spotifyRefreshTime;
+
+    /**
+     * Authentication code for Spotify.
+     */
+    private String spotifyAuthCode;
+
+    /**
      * Creation date.
      */
     private Date createDate;
@@ -72,8 +93,8 @@ public class User {
 
     public User() {
     }
-
-    public User(String id, String localeId, String roleId, String username, String password, String email, Integer maxBitrate, String lastFmSessionToken, boolean lastFmActive, boolean firstConnection, Date createDate, Date deleteDate) {
+    
+    public User(String id, String localeId, String roleId, String username, String password, String email, Integer maxBitrate, String lastFmSessionToken, boolean lastFmActive, boolean firstConnection, String spotifyAccessToken, String spotifyRefreshToken, Timestamp spotifyRefreshTime, String spotifyAuthCode, Date createDate, Date deleteDate) {
         this.id = id;
         this.localeId = localeId;
         this.roleId = roleId;
@@ -84,6 +105,10 @@ public class User {
         this.lastFmSessionToken = lastFmSessionToken;
         this.lastFmActive = lastFmActive;
         this.firstConnection = firstConnection;
+        this.spotifyAccessToken = spotifyAccessToken;
+        this.spotifyRefreshToken = spotifyRefreshToken;
+        this.spotifyRefreshTime = spotifyRefreshTime;
+        this.spotifyAuthCode = spotifyAuthCode;
         this.createDate = createDate;
         this.deleteDate = deleteDate;
     }
@@ -232,6 +257,76 @@ public class User {
         this.lastFmSessionToken = lastFmSessionToken;
     }
 
+    /**
+     * Getter of spotifyAccessToken.
+     *
+     * @return spotifyAccessToken
+     */
+    public String getSpotifyAccessToken() {
+        return spotifyAccessToken;
+    }   
+
+    /**
+     * Setter of spotifyAccessToken.
+     *
+     * @param spotifyAccessToken spotifyAccessToken
+     */
+    public void setSpotifyAccessToken(String spotifyAccessToken) {
+        this.spotifyAccessToken = spotifyAccessToken;
+    }
+
+    /**
+     * Getter of spotifyRefreshToken.
+     *
+     * @return spotifyRefreshToken
+     */
+    public String getSpotifyRefreshToken() {
+        return spotifyRefreshToken;
+    }
+
+    /**
+     * Setter of spotifyRefreshToken.
+     *
+     * @param spotifyRefreshToken spotifyRefreshToken
+     */
+    public void setSpotifyRefreshToken(String spotifyRefreshToken) {
+        this.spotifyRefreshToken = spotifyRefreshToken;
+    }
+
+    /**
+     * Getter of spotifyRefreshTime.
+     *
+     * @return spotifyRefreshTime
+     */
+    public Timestamp getSpotifyRefreshTime() {
+        return spotifyRefreshTime;
+    }
+
+    /**
+     * Setter of spotifyRefreshTime.
+     *
+     * @param spotifyRefreshTime spotifyRefreshTime
+     */
+    public void setSpotifyRefreshTime(Timestamp spotifyRefreshTime) {
+        this.spotifyRefreshTime = spotifyRefreshTime;
+    }
+
+    /**
+     * Setter of authCode.
+     * @param authCode
+     */
+    public void setSpotifyAuthCode(String authCode) {
+        this.spotifyAuthCode = authCode;
+    }
+
+    /**
+     * Getter of authCode
+     * @return authCode
+     */
+    public String getSpotifyAuthCode() {
+        return spotifyAuthCode;
+    }
+    
     /**
      * Getter of lastFmActive.
      *
