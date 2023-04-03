@@ -395,8 +395,8 @@ alter table T_USER_PLAY
 references T_USER (ID)
 on delete restrict on update restrict;
 
-insert into t_config(id,value) values('LAST_FM_API_KEY','7119a7b5c4455bbe8196934e22358a27');
-insert into t_config(id,value) values('LAST_FM_API_SECRET','30dce5dfdb01b87af6038dd36f696f8a');
+insert into t_config(id,value) values('LAST_FM_API_KEY','44d86ca10d9ea3089dc237567c1d51ae');
+insert into t_config(id,value) values('LAST_FM_API_SECRET','1772d646f519e3a51de7505bffa41d15e');
 insert into t_config(id,value) values('DB_VERSION', '0');
 insert into t_config(id,value) values('LUCENE_DIRECTORY_STORAGE', 'FILE');
 insert into t_privilege(id) values('ADMIN');

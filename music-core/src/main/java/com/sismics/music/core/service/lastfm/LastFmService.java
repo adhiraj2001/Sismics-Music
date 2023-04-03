@@ -21,6 +21,8 @@ import com.sismics.util.lastfm.LastFmUtil;
 import de.umass.lastfm.*;
 import de.umass.lastfm.scrobble.ScrobbleData;
 import de.umass.lastfm.scrobble.ScrobbleResult;
+
+import org.classpath.icedtea.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -297,5 +299,15 @@ public class LastFmService extends AbstractScheduledService {
      */
     public Collection<Album> searchAlbumArt(String query) {
         return Album.search(query, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY));
+    }
+    // searching for tracks using 
+    // trackname
+    public Collection<de.umass.lastfm.Track> searchTrack(String query, int limit) {
+        System.out.println("Searching for track: " + query);    
+        return de.umass.lastfm.Track.search(null,query,limit, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY));
+    }
+
+    public Collection<de.umass.lastfm.Track> recommend(String artist, String name, int limit) {
+        return de.umass.lastfm.Track.getSimilar(artist,name,ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY), limit);
     }
 }

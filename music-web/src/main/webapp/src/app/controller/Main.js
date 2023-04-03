@@ -3,8 +3,23 @@
 /**
  * Main controller.
  */
-angular.module('music').controller('Main', function($rootScope, $state, $scope, Playlist, Album) {
+angular.module('music').controller('Main', function($rootScope, $state, $scope, Playlist, Album, Restangular) {
   $scope.partyMode = Playlist.isPartyMode();
+
+  $scope.lastFmSearch = function(query) {
+    Restangular.one("externalsearch/lastfmsearch").get(query).then(function(response) {
+      $scope.myData = response;
+      console.log(response);
+    });
+  };
+
+  $scope.lastFmRecommendations = function(playlistId) {
+    console.log(playlistId);
+    Restangular.one("playlist/" + playlistId + "/lastfmrecommendation").get().then(function(response) {
+      $scope.myData = response;
+      console.log(response);
+    });
+  };
 
   // Keep party mode in sync
   $rootScope.$on('playlist.party', function(e, partyMode) {
