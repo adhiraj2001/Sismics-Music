@@ -9,7 +9,6 @@ angular.module('music').controller('Main', function($rootScope, $state, $scope, 
   $scope.lastFmSearch = function(query) {
     Restangular.one("externalsearch/lastfmsearch").get(query).then(function(response) {
       $scope.myData = response;
-      console.log(response);
     });
   };
 
@@ -17,7 +16,6 @@ angular.module('music').controller('Main', function($rootScope, $state, $scope, 
     console.log(playlistId);
     Restangular.one("playlist/" + playlistId + "/lastfmrecommendation").get().then(function(response) {
       $scope.myData = response;
-      console.log(response);
     });
   };
 

@@ -303,7 +303,6 @@ public class LastFmService extends AbstractScheduledService {
     // searching for tracks using 
     // trackname
     public Collection<de.umass.lastfm.Track> searchTrack(String query, int limit) {
-        System.out.println("Searching for track: " + query);    
         return de.umass.lastfm.Track.search(null,query,limit, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY));
     }
 

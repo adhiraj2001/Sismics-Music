@@ -42,7 +42,6 @@ public class ExternalSearchResource {
         // String[] queryParts = query.split(":");
         // String songName = queryParts[1];
         // songName = songName.substring(1, songName.length() - 2);
-        // System.out.println(songName);
         String songName = query;
         final LastFmService lastFmService = new LastFmService();
         Collection<de.umass.lastfm.Track> tracks = lastFmService.searchTrack(songName, 10);

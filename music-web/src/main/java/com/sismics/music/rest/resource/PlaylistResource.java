@@ -633,7 +633,6 @@ public class PlaylistResource extends BaseResource {
     @GET
     @Path("{id: [a-z0-9\\-]+}/lastfmrecommendation")
     public JsonObject recommendationLastfm(@PathParam("id") String playlistId) {
-        //implement strategy pattern ig
         JsonObject playlist = getPlaylistTracks(playlistId);
         final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
         // iterate over all the tracks in the playlist,ie, playlist.tracks using a for loop
