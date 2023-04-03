@@ -23,6 +23,10 @@ public class AlbumDtoMapper implements ResultSetMapper<AlbumDto> {
         dto.setArtistName(r.getString("artistName"));
         dto.setUpdateDate(r.getTimestamp("c1"));
         dto.setUserPlayCount(r.getLong("c2"));
+
+        dto.setUserId(r.getString("userId"));
+        dto.setAccess(r.getString("access"));
+
         return dto;
     }
 }

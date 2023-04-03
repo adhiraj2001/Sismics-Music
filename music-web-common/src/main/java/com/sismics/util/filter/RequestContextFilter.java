@@ -49,7 +49,7 @@ public class RequestContextFilter implements Filter {
         } catch (Exception e) {
             log.error("Error initializing base data directory", e);
         }
-        if (log.isInfoEnabled()) {
+        if (log.isInfoEnabled() && baseDataDirectory != null) {
             log.info(MessageFormat.format("Using base data directory: {0}", baseDataDirectory.toString()));
         }
         

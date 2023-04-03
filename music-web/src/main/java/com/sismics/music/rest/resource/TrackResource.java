@@ -4,8 +4,7 @@ import com.sismics.music.core.dao.dbi.ArtistDao;
 import com.sismics.music.core.dao.dbi.TrackDao;
 import com.sismics.music.core.dao.dbi.UserDao;
 import com.sismics.music.core.dao.dbi.UserTrackDao;
-import com.sismics.music.core.event.async.TrackLikedAsyncEvent;
-import com.sismics.music.core.event.async.TrackUnlikedAsyncEvent;
+import com.sismics.music.core.event.async.TrackAsyncEvent;
 import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.Artist;
 import com.sismics.music.core.model.dbi.Track;
@@ -197,7 +196,7 @@ public class TrackResource extends BaseResource {
 
         // Love the track on Last.fm
         final User user = new UserDao().getActiveById(principal.getId());
-        AppContext.getInstance().getLastFmEventBus().post(new TrackLikedAsyncEvent(user, track));
+        AppContext.getInstance().getLastFmEventBus().post(new TrackAsyncEvent(user, track));
 
         // Always return OK
         return okJson();
@@ -229,7 +228,7 @@ public class TrackResource extends BaseResource {
 
         // Unlove the track on Last.fm
         final User user = new UserDao().getActiveById(principal.getId());
-        AppContext.getInstance().getLastFmEventBus().post(new TrackUnlikedAsyncEvent(user, track));
+        AppContext.getInstance().getLastFmEventBus().post(new TrackAsyncEvent(user, track));
 
         // Always return OK
         return okJson();

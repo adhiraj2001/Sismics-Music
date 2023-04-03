@@ -4,10 +4,30 @@
  * Album controller.
  */
 angular.module('music').controller('Album', function($scope, $state, $stateParams, Restangular, Playlist, $modal) {
+
   // Load album
   Restangular.one('album', $stateParams.id).get().then(function(data) {
     $scope.album = data;
+
+    // var accessType = $scope.album.access;
+    $scope.isPublic = (data.access === "PUBLIC");
+    console.log("Album isPublic: " + $scope.isPublic);
+
+    // var ownerType = $scope.album.isOwner;
+    $scope.isOwner = data.isOwner;
+    console.log("Album isOwner: " + $scope.isOwner);
+
+    // var accessType = $scope.album.access;
+    $scope.userId = data.userId;
+    console.log("Album userId: " + $scope.userId);
   });
+
+
+  $scope.changeAccess = function() {
+    Restangular.one('album', $stateParams.id).post('access', { access: ($scope.isPublic ? "PUBLIC" : "PRIVATE") }).then(function() {
+      console.log("Album isPublic: " + $scope.isPublic);
+    });
+  };
 
   // Play a single track
   $scope.playTrack = function(track) {

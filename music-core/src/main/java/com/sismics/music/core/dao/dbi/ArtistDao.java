@@ -21,25 +21,54 @@ import java.util.*;
  */
 public class ArtistDao extends BaseDao<ArtistDto, ArtistCriteria> {
     @Override
+    // protected QueryParam getQueryParam(ArtistCriteria criteria, FilterCriteria
+    // filterCriteria) {
+    // List<String> criteriaList = new ArrayList<>();
+    // Map<String, Object> parameterMap = new HashMap<>();
+
+    // StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0 ");
+    // sb.append(" from t_artist a ");
+
+    // // Adds search criteria
+    // criteriaList.add("a.deletedate is null");
+    // if (criteria.getId() != null) {
+    // criteriaList.add("a.id = :id");
+    // parameterMap.put("id", criteria.getId());
+    // }
+    // if (criteria.getNameLike() != null) {
+    // criteriaList.add("lower(a.name) like lower(:nameLike)");
+    // parameterMap.put("nameLike", "%" + criteria.getNameLike() + "%");
+    // }
+
+    // return new QueryParam(sb.toString(), criteriaList, parameterMap, null,
+    // filterCriteria, new ArtistDtoMapper());
+    // }
     protected QueryParam getQueryParam(ArtistCriteria criteria, FilterCriteria filterCriteria) {
         List<String> criteriaList = new ArrayList<>();
         Map<String, Object> parameterMap = new HashMap<>();
 
         StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0 ");
-        sb.append(" from t_artist a ");
-
-        // Adds search criteria
-        criteriaList.add("a.deletedate is null");
-        if (criteria.getId() != null) {
-            criteriaList.add("a.id = :id");
-            parameterMap.put("id", criteria.getId());
-        }
-        if (criteria.getNameLike() != null) {
-            criteriaList.add("lower(a.name) like lower(:nameLike)");
-            parameterMap.put("nameLike", "%" + criteria.getNameLike() + "%");
-        }
+        sb.append("from t_artist a ");
+        addSearchCriteria(criteria, criteriaList, parameterMap);
 
         return new QueryParam(sb.toString(), criteriaList, parameterMap, null, filterCriteria, new ArtistDtoMapper());
+    }
+
+    private void addSearchCriteria(ArtistCriteria criteria, List<String> criteriaList,
+            Map<String, Object> parameterMap) {
+        criteriaList.add("a.deletedate is null");
+
+        addCriteria("a.id = :id", criteria.getId(), parameterMap, criteriaList);
+        addCriteria("lower(a.name) like lower(:nameLike)", "%" + criteria.getNameLike() + "%", parameterMap,
+                criteriaList);
+    }
+
+    private void addCriteria(String criterion, Object value, Map<String, Object> parameterMap,
+            List<String> criteriaList) {
+        if (value != null) {
+            criteriaList.add(criterion);
+            parameterMap.put(criterion.substring(criterion.indexOf(":") + 1), value);
+        }
     }
 
     /**
@@ -64,7 +93,7 @@ public class ArtistDao extends BaseDao<ArtistDto, ArtistCriteria> {
 
         return artist.getId();
     }
-    
+
     /**
      * Updates a artist.
      * 
@@ -84,7 +113,7 @@ public class ArtistDao extends BaseDao<ArtistDto, ArtistCriteria> {
 
         return artist;
     }
-    
+
     /**
      * Gets an active artist by its name.
      * 
@@ -100,7 +129,7 @@ public class ArtistDao extends BaseDao<ArtistDto, ArtistCriteria> {
                 .mapTo(Artist.class)
                 .first();
     }
-    
+
     /**
      * Gets an active artist by its artistname.
      *
@@ -148,7 +177,7 @@ public class ArtistDao extends BaseDao<ArtistDto, ArtistCriteria> {
                 .bind("deleteDate", new Timestamp(new Date().getTime()))
                 .execute();
     }
-    
+
     /**
      * Assemble the query results.
      *

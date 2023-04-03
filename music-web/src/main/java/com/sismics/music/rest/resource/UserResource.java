@@ -8,8 +8,7 @@ import com.sismics.music.core.dao.dbi.criteria.UserCriteria;
 import com.sismics.music.core.dao.dbi.dto.UserDto;
 import com.sismics.music.core.event.PasswordChangedEvent;
 import com.sismics.music.core.event.UserCreatedEvent;
-import com.sismics.music.core.event.async.LastFmUpdateLovedTrackAsyncEvent;
-import com.sismics.music.core.event.async.LastFmUpdateTrackPlayCountAsyncEvent;
+import com.sismics.music.core.event.async.LastFmLovedTrackAsyncEvent;
 import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.AuthenticationToken;
 import com.sismics.music.core.model.dbi.Playlist;
@@ -63,11 +62,12 @@ public class UserResource extends BaseResource {
         @FormParam("password") String password,
         @FormParam("locale") String localeId,
         @FormParam("email") String email) {
-
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        checkPrivilege(Privilege.ADMIN);
+        
+        //! This part has been commented out to allow registration without admin privileges by anonymous users
+        // if (!authenticate()) {
+        //     throw new ForbiddenClientException();
+        // }
+        // checkPrivilege(Privilege.ADMIN);
         
         // Validate the input data
         username = Validation.length(username, "username", 3, 50);
@@ -286,6 +286,9 @@ public class UserResource extends BaseResource {
         if (userId == null) {
             throw new ForbiddenClientException();
         }
+
+        // Add the userId to AppContext
+        AppContext.getInstance().setUserId(userId);
             
         // Create a new session token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
@@ -337,6 +340,9 @@ public class UserResource extends BaseResource {
         if (authenticationToken == null) {
             throw new ForbiddenClientException();
         }
+
+        // Remove userId from AppContext
+        AppContext.getInstance().setUserId(null);
         
         // Deletes the server token
         try {
@@ -560,8 +566,8 @@ public class UserResource extends BaseResource {
         userDao.updateLastFmSessionToken(user);
 
         // Raise a Last.fm registered event
-        AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateLovedTrackAsyncEvent(user));
-        AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateTrackPlayCountAsyncEvent(user));
+        AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
+        AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
 
         // Always return ok
         JsonObject response = Json.createObjectBuilder()

@@ -10,8 +10,7 @@ import com.sismics.music.core.dao.dbi.criteria.TrackCriteria;
 import com.sismics.music.core.dao.dbi.criteria.UserCriteria;
 import com.sismics.music.core.dao.dbi.dto.TrackDto;
 import com.sismics.music.core.dao.dbi.dto.UserDto;
-import com.sismics.music.core.event.async.LastFmUpdateLovedTrackAsyncEvent;
-import com.sismics.music.core.event.async.LastFmUpdateTrackPlayCountAsyncEvent;
+import com.sismics.music.core.event.async.LastFmLovedTrackAsyncEvent;
 import com.sismics.music.core.model.context.AppContext;
 import com.sismics.music.core.model.dbi.Artist;
 import com.sismics.music.core.model.dbi.Track;
@@ -22,6 +21,8 @@ import com.sismics.util.lastfm.LastFmUtil;
 import de.umass.lastfm.*;
 import de.umass.lastfm.scrobble.ScrobbleData;
 import de.umass.lastfm.scrobble.ScrobbleResult;
+
+import org.classpath.icedtea.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +48,8 @@ public class LastFmService extends AbstractScheduledService {
             List<UserDto> userList = userDao.findByCriteria(new UserCriteria().setLastFmSessionTokenNotNull(true));
             for (UserDto userDto : userList) {
                 User user = userDao.getActiveById(userDto.getId());
-                AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateLovedTrackAsyncEvent(user));
-                AppContext.getInstance().getLastFmEventBus().post(new LastFmUpdateTrackPlayCountAsyncEvent(user));
+                AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
+                AppContext.getInstance().getLastFmEventBus().post(new LastFmLovedTrackAsyncEvent(user));
             }
         });
     }
@@ -298,5 +299,14 @@ public class LastFmService extends AbstractScheduledService {
      */
     public Collection<Album> searchAlbumArt(String query) {
         return Album.search(query, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY));
+    }
+    // searching for tracks using 
+    // trackname
+    public Collection<de.umass.lastfm.Track> searchTrack(String query, int limit) {
+        return de.umass.lastfm.Track.search(null,query,limit, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY));
+    }
+
+    public Collection<de.umass.lastfm.Track> recommend(String artist, String name, int limit) {
+        return de.umass.lastfm.Track.getSimilar(artist,name,ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY), limit);
     }
 }

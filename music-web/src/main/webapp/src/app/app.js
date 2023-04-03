@@ -24,6 +24,15 @@ angular.module('music',
               }
             }
           })
+          .state('register', {
+            url: '/register',
+            views: {
+              'page': {
+                templateUrl: 'partial/register.html',
+                controller: 'Register'
+              }
+            }
+          })
           .state('tag', {
             url: '/album/:id/tag',
             views: {

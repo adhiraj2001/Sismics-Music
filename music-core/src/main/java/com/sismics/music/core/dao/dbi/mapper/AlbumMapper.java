@@ -16,6 +16,7 @@ public class AlbumMapper extends BaseResultSetMapper<Album> {
     public String[] getColumns() {
         return new String[] {
                 "id",
+                "user_id",
                 "directory_id",
                 "artist_id",
                 "name",
@@ -31,6 +32,7 @@ public class AlbumMapper extends BaseResultSetMapper<Album> {
         final String[] columns = getColumns();
         int column = 0;
         return new Album(
+                r.getString(columns[column++]),
                 r.getString(columns[column++]),
                 r.getString(columns[column++]),
                 r.getString(columns[column++]),

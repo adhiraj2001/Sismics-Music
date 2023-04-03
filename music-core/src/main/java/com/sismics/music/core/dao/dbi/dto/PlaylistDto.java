@@ -1,5 +1,7 @@
 package com.sismics.music.core.dao.dbi.dto;
 
+import com.sismics.music.core.constant.AccessType;
+
 /**
  * Playlist DTO.
  *
@@ -30,6 +32,11 @@ public class PlaylistDto {
      * Number of plays in the playlist.
      */
     private Long userTrackPlayCount;
+
+    /**
+     * Access type.
+     */
+    private AccessType access;
 
     public String getId() {
         return id;
@@ -69,5 +76,22 @@ public class PlaylistDto {
 
     public void setUserTrackPlayCount(Long userTrackPlayCount) {
         this.userTrackPlayCount = userTrackPlayCount;
+    }
+
+    public AccessType getAccess() {
+        return access;
+    }
+
+    public void setAccess(String access) {
+        switch(access) {
+            case "PUBLIC":
+                this.access = AccessType.PUBLIC;
+                break;
+            case "PRIVATE":
+                this.access = AccessType.PRIVATE;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid access: " + access);
+        }
     }
 }
