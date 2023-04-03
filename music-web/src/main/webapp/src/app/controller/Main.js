@@ -7,8 +7,13 @@ angular.module('music').controller('Main', function($rootScope, $state, $scope, 
   $scope.partyMode = Playlist.isPartyMode();
 
   $scope.spotifySearch = function(query) {
-    console.log(query.query);
     Restangular.one("search/spotifysearch").get(query).then(function(response) {
+      $scope.myData = response;
+    });
+  };
+
+  $scope.spotifyRecommend = function(playlistId) {
+    Restangular.one("playlist/" + playlistId + "/spotifyrecommendation").get().then(function(response) {
       $scope.myData = response;
       console.log(response);
     });

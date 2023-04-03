@@ -18,6 +18,8 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.Validation;
+import com.wrapper.spotify.model_objects.specification.Recommendations;
+import com.wrapper.spotify.model_objects.specification.TrackSimplified;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -26,6 +28,40 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
+
+import com.sismics.music.core.dao.dbi.AlbumDao;
+import com.sismics.music.core.dao.dbi.ArtistDao;
+import com.sismics.music.core.dao.dbi.TrackDao;
+import com.sismics.music.core.dao.dbi.criteria.AlbumCriteria;
+import com.sismics.music.core.dao.dbi.criteria.ArtistCriteria;
+import com.sismics.music.core.dao.dbi.criteria.TrackCriteria;
+import com.sismics.music.core.dao.dbi.dto.AlbumDto;
+import com.sismics.music.core.dao.dbi.dto.ArtistDto;
+import com.sismics.music.core.dao.dbi.dto.TrackDto;
+import com.sismics.music.core.util.dbi.PaginatedList;
+import com.sismics.music.core.util.dbi.PaginatedLists;
+import com.sismics.music.rest.util.JsonUtil;
+import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+
+import java.util.Collection;
+import java.util.List;
+import com.sismics.music.core.service.spotify.SpotifyService;
+import de.umass.lastfm.*;
+
+import com.sismics.music.core.model.context.AppContext;
 
 /**
  * Playlist REST resources.
@@ -573,6 +609,54 @@ public class PlaylistResource extends BaseResource {
         if (playlist.getName() != null) {
             response.add("name", playlist.getName());
         }
+        return response;
+    }
+
+    public JsonObject getPlaylistTracks(String playlistId) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the playlist
+        PlaylistCriteria criteria = new PlaylistCriteria()
+                .setUserId(principal.getId());
+        if (DEFAULt_playlist.equals(playlistId)) {
+            criteria.setDefaultPlaylist(true);
+        } else {
+            criteria.setDefaultPlaylist(false);
+            criteria.setId(playlistId);
+        }
+        PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
+        notFoundIfNull(playlist, "Playlist: " + playlistId);
+
+        // Output the playlist
+        return buildPlaylistJson(playlist).build();
+    }
+
+    @GET
+    @Path("{id: [a-z0-9\\-]+}/spotifyrecommendation")
+    public JsonObject recommendationLastfm(@PathParam("id") String playlistId) {
+        //implement strategy pattern ig
+        JsonObject playlist = getPlaylistTracks(playlistId);
+        final SpotifyService spotifyService = AppContext.getInstance().getSpotifyService();
+        // iterate over all the tracks in the playlist,ie, playlist.tracks using a for loop
+        // for each track, get the artist and album
+        JsonArray tracks = playlist.getJsonArray("tracks");
+        JsonArrayBuilder rectrackArray = Json.createArrayBuilder();
+
+        for (int i=0;i<tracks.size();i++) {
+            JsonObject track = tracks.getJsonObject(i);
+            String artist = track.getJsonObject("artist").getString("name");
+            String trackname = track.getString("title"); 
+            TrackSimplified[] recom= spotifyService.getRecommendations_Sync(trackname, artist);
+            
+            System.out.println("recom: " + recom);
+        }
+        JsonObject response = Json.createObjectBuilder()
+                .add("status", "ok")
+                .add("tracks", rectrackArray)
+                .build();
+        System.out.println("response: " + response);
         return response;
     }
 }

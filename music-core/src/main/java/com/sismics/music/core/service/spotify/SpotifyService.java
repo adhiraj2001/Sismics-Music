@@ -19,6 +19,8 @@ import com.sismics.music.core.util.ConfigUtil;
 import com.sismics.music.core.util.TransactionUtil;
 import com.sismics.util.spotify.SpotifyUtil;
 import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
+import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
@@ -30,6 +32,9 @@ import com.wrapper.spotify.requests.authorization.authorization_code.Authorizati
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
+import com.wrapper.spotify.model_objects.specification.Recommendations;
+import com.wrapper.spotify.model_objects.specification.TrackSimplified;
+import com.wrapper.spotify.requests.data.browse.GetRecommendationsRequest;
 
 // import se.michaelthelin.spotify.SpotifyApi;
 // import se.michaelthelin.spotify.SpotifyHttpManager;
@@ -75,8 +80,8 @@ public class SpotifyService extends AbstractScheduledService {
     @Override
     protected void startUp() throws Exception {
         log.info("Starting SpotifyService");
-        clientId = ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_KEY);
-        clientSecret = ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_SECRET);
+        clientId = "064fff7503314f9fa899611b745da6f2";
+        clientSecret = "5978360554fd40cda67c199ceccaaa13";
         redirectUri = SpotifyHttpManager.makeUri(ConfigUtil.getConfigStringValue(ConfigType.SPOTIFY_API_REDIRECT_URI));
     
         expires_in = 3500;
@@ -171,14 +176,29 @@ public class SpotifyService extends AbstractScheduledService {
 
     public Paging<com.wrapper.spotify.model_objects.specification.Track> searchTracks_Sync(User user, String query) {
         SpotifyApi spotifyApi = new SpotifyApi.Builder()
-        .setAccessToken(user.getSpotifyAccessToken())
+        .setClientId("064fff7503314f9fa899611b745da6f2")
+        .setClientSecret("5978360554fd40cda67c199ceccaaa13")
         .build();
+
+        ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials()
+        .build();
+
+        try {
+            final ClientCredentials clientCredentials = clientCredentialsRequest.execute();
+            // Set access token for further "spotifyApi" object usage
+            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+            System.out.println("Expires in: " + clientCredentials.getExpiresIn());
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
         final SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(query)
             //  .market(CountryCode.SE)
             //  .limit(10)
             //  .offset(0)
             //  .includeExternal("audio")
         .build();
+
         try {
           final Paging<com.wrapper.spotify.model_objects.specification.Track> trackPaging = searchTracksRequest.execute();
           return trackPaging;
@@ -190,14 +210,29 @@ public class SpotifyService extends AbstractScheduledService {
 
     public Paging<AlbumSimplified> searchAlbums_Sync(User user, String query) {
         SpotifyApi spotifyApi = new SpotifyApi.Builder()
-        .setAccessToken(user.getSpotifyAccessToken())
+        .setClientId("064fff7503314f9fa899611b745da6f2")
+        .setClientSecret("5978360554fd40cda67c199ceccaaa13")
         .build();
+
+        ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials()
+        .build();
+
+        try {
+            final ClientCredentials clientCredentials = clientCredentialsRequest.execute();
+            // Set access token for further "spotifyApi" object usage
+            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+            System.out.println("Expires in: " + clientCredentials.getExpiresIn());
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
         final SearchAlbumsRequest searchAlbumsRequest = spotifyApi.searchAlbums(query)
             //  .market(CountryCode.SE)
             //  .limit(10)
             //  .offset(0)
             //  .includeExternal("audio")
         .build();
+
         try {
           final Paging<AlbumSimplified> albumPaging = searchAlbumsRequest.execute();
           return albumPaging;
@@ -222,6 +257,37 @@ public class SpotifyService extends AbstractScheduledService {
           return artistPaging;
         } catch (IOException | SpotifyWebApiException | ParseException e) {
           System.out.println("Error: " + e.getMessage());
+          return null;
+        }
+    }
+
+    public TrackSimplified[] getRecommendations_Sync(String trackName, String artistName) {
+        SpotifyApi spotifyApi = new SpotifyApi.Builder()
+        .setClientId("064fff7503314f9fa899611b745da6f2")
+        .setClientSecret("5978360554fd40cda67c199ceccaaa13")
+        .build();
+
+        ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials()
+        .build();
+
+        try {
+            final ClientCredentials clientCredentials = clientCredentialsRequest.execute();
+            // Set access token for further "spotifyApi" object usage
+            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        final GetRecommendationsRequest getRecommendationsRequest = spotifyApi.getRecommendations()
+        .seed_artists(artistName)
+        .seed_tracks(trackName)
+        .build();
+
+        try {
+          final Recommendations recommendations = getRecommendationsRequest.execute();
+          return recommendations.getTracks();
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+          System.out.println("Error: " + e);
           return null;
         }
     }

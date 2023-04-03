@@ -133,7 +133,6 @@ public class SearchResource extends BaseResource {
     // @Path("{spotify/query: .+}")
     @Path("/spotifysearch")
     public Response spotifySearch(@QueryParam("query") String query) {
-        System.out.println(query);
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
