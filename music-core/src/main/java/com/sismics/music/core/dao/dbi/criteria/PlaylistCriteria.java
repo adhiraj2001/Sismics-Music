@@ -1,5 +1,7 @@
 package com.sismics.music.core.dao.dbi.criteria;
 
+import com.sismics.music.core.constant.AccessType;
+
 /**
  * Playlist criteria.
  *
@@ -20,6 +22,11 @@ public class PlaylistCriteria {
      * Name (like).
      */
     private String nameLike;
+
+    /**
+     * Access type.
+     */
+    private AccessType access;
 
     /**
      * User ID.
@@ -59,6 +66,15 @@ public class PlaylistCriteria {
 
     public PlaylistCriteria setUserId(String userId) {
         this.userId = userId;
+        return this;
+    }
+
+    public AccessType getAccess() {
+        return access;
+    }
+
+    public PlaylistCriteria setPublic(boolean flag) {
+        this.access = flag ? AccessType.PUBLIC : AccessType.PRIVATE;
         return this;
     }
 }

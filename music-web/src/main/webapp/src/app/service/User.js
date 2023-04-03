@@ -24,6 +24,20 @@ angular.module('music').factory('User', function(Restangular) {
     login: function(user) {
       return Restangular.one('user').post('login', user);
     },
+
+    /**
+     * Register an user.
+     */
+    register: function(user) {
+      return Restangular.one('user').put({username: user.username, password: user.password, locale: null, email: user.email});
+    },
+
+    /**
+     * Check an user.
+     */
+    checkUsername: function(username) {
+      return Restangular.one('user/check_username').get({username: username});
+    },
     
     /**
      * Logout the current user.

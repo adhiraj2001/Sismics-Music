@@ -27,7 +27,7 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
         List<String> criteriaList = new ArrayList<>();
         Map<String, Object> parameterMap = new HashMap<>();
 
-        StringBuilder sb = new StringBuilder("select p.id as id, p.name as c0,")
+        StringBuilder sb = new StringBuilder("select p.id as id, p.name as c0, p.access as access,")
                 .append("  p.user_id as userId,")
                 .append("  count(pt.id) as c1,")
                 .append("  sum(utr.playcount) as c2")
@@ -55,6 +55,10 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
             criteriaList.add("lower(p.name) like lower(:nameLike)");
             parameterMap.put("nameLike", "%" + criteria.getNameLike() + "%");
         }
+        if (criteria.getAccess() != null) {
+            criteriaList.add("p.access = :access");
+            parameterMap.put("access", criteria.getAccess().toString());
+        }
 
         return new QueryParam(sb.toString(), criteriaList, parameterMap, null, filterCriteria, Lists.newArrayList("p.id"), new PlaylistMapper());
     }
@@ -77,6 +81,23 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
 
         return playlist.getId();
     }
+
+
+    /**
+     * Update access.
+     *
+     * @param playlist Playlist to update
+     */
+    public void updateAccess(Playlist playlist) {
+        final Handle handle = ThreadLocalContext.get().getHandle();
+        handle.createStatement("update t_playlist" +
+                "  set access = :access" +
+                "  where id = :id")
+                .bind("access", playlist.getAccess().toString())
+                .bind("id", playlist.getId())
+                .execute();
+    }
+
 
     /**
      * Update a playlist.

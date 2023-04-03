@@ -90,6 +90,11 @@ public class AppContext {
      * Asynchronous executors.
      */
     private List<ExecutorService> asyncExecutorList;
+
+    /**
+     * User play count.
+     */
+    private String userId;
     
     /**
      * Private constructor.
@@ -263,5 +268,18 @@ public class AppContext {
      */
     public ImportAudioService getImportAudioService() {
         return importAudioService;
+    }
+
+    /**
+     * Getter of logged in userId.
+     *
+     * @return the userId
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

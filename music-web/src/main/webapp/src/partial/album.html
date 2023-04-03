@@ -9,12 +9,23 @@
       <button class="btn btn-link" ng-click="shuffleAllTracks()"><span class="glyphicon glyphicon-random"></span> Shuffle</button>
       <button class="btn btn-link" ng-click="addAllTracks()"><span class="glyphicon glyphicon-plus"></span> Add all</button>
       <button class="btn btn-link" ng-click="editTags()"><span class="glyphicon glyphicon-pencil"></span> Edit tags</button>
+
       <div class="dropdown" dropdown>
         <button class="btn btn-link dropdown-toggle" dropdown-toggle>
           <span class="glyphicon glyphicon-plus"></span> Add to playlist
         </button>
         <playlist-dropdown tracks="album.tracks"></playlist-dropdown>
       </div>
+
+      <label ng-show="isOwner">
+        <input type="checkbox" ng-model="isPublic" ng-change="changeAccess()" /> Public
+      </label>
+
+      <scope ng-show="!isOwner">
+        <b><i>
+          [Public Playlist]
+        </i></b>
+      </scope>
     </div>
 
     <div class="row">

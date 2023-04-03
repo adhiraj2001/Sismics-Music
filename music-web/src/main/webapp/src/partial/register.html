@@ -1,0 +1,94 @@
+<div class="row">
+  <div class="col-sm-offset-4 col-sm-4">
+
+  <p class="text-center text-danger">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    Music is not secured. Please register with that in mind.
+  </p>
+
+  <h3 class="text-center"> <u> Register </u> </h3>
+
+  <form name="editUserForm" novalidate ng-click="editUserForm.submitted = true">
+
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.username.$valid && editUserForm.submitted, success: editUserForm.username.$valid }">
+
+      <label class="sr-only" for="inputUsername">Username</label>
+        <input name="username" type="text" id="inputUsername" required class="form-control"
+              ng-minlength="3" ng-maxlength="50" placeholder="Username" ng-model="user.username"/>
+
+      <div ng-show="editUserForm.submitted">
+        <span class="help-block" ng-show="editUserForm.username.$error.required">Required</span>
+        <span class="help-block" ng-show="editUserForm.username.$error.minlength">Too short</span>
+        <span class="help-block" ng-show="editUserForm.username.$error.maxlength">Too long</span>
+      </div>
+
+    </div>
+
+
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.email.$valid && editUserForm.submitted, success: editUserForm.email.$valid }">
+
+      <label class="sr-only" for="inputEmail">E-mail</label>
+        <input name="email" type="email" id="inputEmail" required class="form-control"
+              ng-minlength="3" ng-maxlength="50" placeholder="E-mail" ng-model="user.email"/>
+
+      <div ng-show="editUserForm.submitted">
+        <span class="help-block" ng-show="editUserForm.email.$error.required">Required</span>
+        <span class="help-block" ng-show="editUserForm.email.$error.email">Must be a valid e-mail</span>
+        <span class="help-block" ng-show="editUserForm.email.$error.minlength">Too short</span>
+        <span class="help-block" ng-show="editUserForm.email.$error.maxlength">Too long</span>
+      </div>
+
+    </div>
+
+
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid && editUserForm.submitted, success: editUserForm.password.$valid }">
+
+      <label class="sr-only" for="inputPassword">Password</label>
+        <input name="password" type="password" id="inputPassword" class="form-control"
+              ng-minlength="8" ng-maxlength="50" placeholder="Password" ng-model="user.password"/>
+
+      <div ng-show="editUserForm.submitted">
+        <span class="help-block" ng-show="editUserForm.password.$error.required">Required</span>
+        <span class="help-block" ng-show="editUserForm.password.$error.minlength">Too short</span>
+        <span class="help-block" ng-show="editUserForm.password.$error.maxlength">Too long</span>
+      </div>
+
+    </div>
+
+
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid && editUserForm.submitted, success: editUserForm.passwordconfirm.$valid }">
+
+      <label class="sr-only" for="inputPasswordConfirm">Password (confirm)</label>
+        <input name="passwordconfirm" type="password" id="inputPasswordConfirm" class="form-control"
+              ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
+              placeholder="Password (confirm)" ng-model="user.passwordconfirm"/>
+
+      <div ng-show="editUserForm.submitted">
+        <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator">Password and password confirmation must match</span>
+      </div>
+
+    </div>
+
+
+    <div class="form-group" style="display: flex; align-items: center; justify-content: center;">
+
+        <button type="submit" class="btn btn-primary" ng-click="register(user)" ng-disabled="!editUserForm.$valid" style="margin-right: auto;">
+          <span class="glyphicon glyphicon-ok"></span> Register
+        </button>
+
+        <button type="reset" class="btn btn-primary" style="margin-left: auto;">
+          <span class="glyphicon glyphicon-erase"></span> Reset
+        </button>
+
+    </div>
+
+  </form>
+
+  <p class="text-center" style="font-size:120%;">
+    Go back to <a href="#/login" ng-click="goto_login($event)">Login</a>
+  </p>
+
+  <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>
+
+  </div>
+</div>

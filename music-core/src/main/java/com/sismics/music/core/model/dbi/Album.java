@@ -7,6 +7,9 @@ import org.skife.jdbi.v2.Handle;
 
 import java.util.Date;
 
+import com.sismics.music.core.constant.AccessType;
+import com.sismics.music.core.dao.dbi.AlbumDao;
+
 /**
  * Album entity.
  * 
@@ -58,15 +61,30 @@ public class Album {
      */
     private String location;
 
+    /**
+     * Playlist access.
+     */
+    private String userId;
+
+    /**
+     * Playlist access.
+     */
+    private AccessType access;
+
     public Album() {
+        access = AccessType.PRIVATE;
     }
 
     public Album(String id) {
         this.id = id;
+
+        access = AccessType.PRIVATE;
     }
 
-    public Album(String id, String directoryId, String artistId, String name, String albumArt, Date createDate, Date updateDate, Date deleteDate, String location) {
+    public Album(String id, String userId, String directoryId, String artistId, String name, String albumArt, Date createDate, Date updateDate, Date deleteDate, String location) {
         this.id = id;
+        this.userId = userId;
+
         this.directoryId = directoryId;
         this.artistId = artistId;
         this.name = name;
@@ -75,6 +93,8 @@ public class Album {
         this.updateDate = updateDate;
         this.deleteDate = deleteDate;
         this.location = location;
+
+        access = AccessType.PRIVATE;
     }
 
     /**
@@ -255,11 +275,50 @@ public class Album {
         this.location = location;
     }
 
+
+    /**
+     * Getter of userId.
+     *
+     * @return id
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    /**
+     * Setter of id.
+     *
+     * @param id id
+     */
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+
+    public AccessType getAccess() {
+        return access;
+    }
+
+    public void setAccess(String access) {
+        switch(access) {
+            case "PUBLIC":
+                this.access = AccessType.PUBLIC;
+                break;
+            case "PRIVATE":
+                this.access = AccessType.PRIVATE;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid access: " + access);
+        }
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
+                // .add("userId", userId)
+                // .add("access", access.toString())
                 .toString();
     }
 }
